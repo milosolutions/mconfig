@@ -1,0 +1,4 @@
+*.doxytag
+*.pro.user
+build-*
+doc/html/

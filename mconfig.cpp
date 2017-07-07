@@ -22,7 +22,7 @@ SOFTWARE.
 *******************************************************************************/
 
 
-#include "miloconfig.h"
+#include "mconfig.h"
 #include <QSettings>
 #include <QPoint>
 #include <QRect>

@@ -32,7 +32,7 @@ SOFTWARE.
 
 #include "mconfig.h"
 
-class SubMiloConfig : public MConfig
+class SubMiloConfig : public MiloConfig
 {
 public:
     SubMiloConfig(QByteArray groupName);

@@ -21,9 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#include "submiloconfig.h"
+#include "submconfig.h"
 
-SubMiloConfig::SubMiloConfig(QByteArray groupName) : MConfig(groupName)
+SubMiloConfig::SubMiloConfig(QByteArray groupName) : MiloConfig(groupName)
 {
     CONFIG_VALUE(testBool, QMetaType::Bool);
     CONFIG_VALUE(testByteArray, QMetaType::QByteArray);

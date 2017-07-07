@@ -25,11 +25,11 @@ SOFTWARE.
 #include <QtTest>
 #include <QCoreApplication>
 #include "mconfig.h"
-#include "submiloconfig.h"
+#include "submconfig.h"
 
 class TestMiloConfig : public QObject
 {
-    Q_OBJECT
+   // Q_OBJECT
 
 private Q_SLOTS:
     void initTestCase();
@@ -134,4 +134,4 @@ void TestMiloConfig::testSave2()
 
 QTEST_MAIN(TestMiloConfig)
 
-#include "tst_miloconfig.moc"
+//#include "tst_miloconfig.moc"

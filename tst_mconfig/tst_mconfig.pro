@@ -1,7 +1,7 @@
 include(../mconfig.pri)
 
-exists(../../tests/testConfig.pri) {
-    include(../../tests/testConfig.pri)
+exists(../../../tests/testConfig.pri) {
+    include(../../../tests/testConfig.pri)
 } else {
     warning("File testConfig.pri was not included")
 }
@@ -27,8 +27,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    tst_miloconfig.cpp \
-    submiloconfig.cpp
+    tst_mconfig.cpp \
+    submconfig.cpp
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 

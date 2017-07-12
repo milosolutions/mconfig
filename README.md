@@ -2,13 +2,13 @@
 
 Milo Code DB main ([online](https://qtdocs.milosolutions.com/milo-code-db/main/) | [offline](\ref milodatabasemain))
 
-MiloConfig is the reference config class for Milo projects.
+MConfig is the reference config class for Milo projects.
 
 Main features:
 1. Very simple to use
 2. Can work without saving any config files, with no overhead.
-3. On demand can save or load configuration to/ from file.
-4. Does not require any special magic to worl.
+3. On demand can save or load configuration to/from file.
+4. Does not require any special magic to work.
 5. Class can be inherited multiple times.
 6. Just check out the code, it speaks for itself :-)
 

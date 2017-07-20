@@ -9,7 +9,7 @@ exists(../../../tests/testConfig.pri) {
 QT       += testlib
 QT       -= gui
 
-TARGET = tst_miloconfig
+TARGET = tst_mconfig
 CONFIG   += console
 CONFIG   -= app_bundle
 
@@ -33,7 +33,7 @@ SOURCES += \
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 HEADERS += \
-    submiloconfig.h
+    submconfig.h
 
 RESOURCES += \
     testdata.qrc

@@ -23,7 +23,7 @@ SOFTWARE.
 
 #include "submconfig.h"
 
-SubMiloConfig::SubMiloConfig(QByteArray groupName) : MiloConfig(groupName)
+SubMConfig::SubMConfig(QByteArray groupName) : MConfig(groupName)
 {
     CONFIG_VALUE(testBool, QMetaType::Bool);
     CONFIG_VALUE(testByteArray, QMetaType::QByteArray);
@@ -37,12 +37,12 @@ SubMiloConfig::SubMiloConfig(QByteArray groupName) : MiloConfig(groupName)
     CONFIG_VALUE(testString, QMetaType::QString);
 }
 
-SubMiloConfig::~SubMiloConfig()
+SubMConfig::~SubMConfig()
 {
 
 }
 
-void SubMiloConfig::zeroData()
+void SubMConfig::zeroData()
 {
     testBool = false;
     testByteArray = NULL;

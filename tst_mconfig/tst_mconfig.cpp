@@ -27,7 +27,7 @@ SOFTWARE.
 #include "mconfig.h"
 #include "submconfig.h"
 
-class TestMiloConfig : public QObject
+class TestMConfig : public QObject
 {
    // Q_OBJECT
 
@@ -48,20 +48,20 @@ private:
     QString m_testConfigPath = QCoreApplication::applicationDirPath() + "/miloConfTest.ini";
 };
 
-void TestMiloConfig::initTestCase()
+void TestMConfig::initTestCase()
 {
-    QCoreApplication::setApplicationName("MiloConfig Test");
+    QCoreApplication::setApplicationName("MConfig Test");
     QCoreApplication::setOrganizationName("Milo");
 }
 
-void TestMiloConfig::cleanupTestCase()
+void TestMConfig::cleanupTestCase()
 {
-    MiloConfig config("Test");
+    MConfig config("Test");
     QFile::remove(config.filePath());
     QFile::remove(m_testConfigPath);
 }
 
-void TestMiloConfig::testLoad1_data()
+void TestMConfig::testLoad1_data()
 {
     QTest::addColumn<QByteArray>("groupName");
     QTest::newRow("SimpleGroupName") << QByteArray("TestGroup");
@@ -69,18 +69,18 @@ void TestMiloConfig::testLoad1_data()
     QTest::newRow("Spaced GroupName") << QByteArray("Test Group");
 }
 
-void TestMiloConfig::testLoad1()
+void TestMConfig::testLoad1()
 {
     QFETCH(QByteArray, groupName);
-    SubMiloConfig config1(groupName);
+    SubMConfig config1(groupName);
     config1.zeroData();
     config1.load(":/data/miloConfTest.ini");
-    SubMiloConfig config2(groupName);
+    SubMConfig config2(groupName);
 
     QCOMPARE(config1, config2);
 }
 
-void TestMiloConfig::testSave1_data()
+void TestMConfig::testSave1_data()
 {
     QTest::addColumn<QByteArray>("groupName");
     QTest::newRow("SimpleGroupName") << QByteArray("TestGroup");
@@ -88,15 +88,15 @@ void TestMiloConfig::testSave1_data()
     QTest::newRow("Spaced GroupName") << QByteArray("Test Group");
 }
 
-void TestMiloConfig::testSave1()
+void TestMConfig::testSave1()
 {
     QFETCH(QByteArray, groupName);
-    SubMiloConfig config(groupName);
+    SubMConfig config(groupName);
     config.save();
     QVERIFY(QFile::exists(config.filePath()));
 }
 
-void TestMiloConfig::testLoad2_data()
+void TestMConfig::testLoad2_data()
 {
     QTest::addColumn<QByteArray>("groupName");
     QTest::newRow("SimpleGroupName") << QByteArray("TestGroup");
@@ -104,11 +104,11 @@ void TestMiloConfig::testLoad2_data()
     QTest::newRow("Spaced GroupName") << QByteArray("Test Group");
 }
 
-void TestMiloConfig::testLoad2()
+void TestMConfig::testLoad2()
 {
     QFETCH(QByteArray, groupName);
-    SubMiloConfig config1(groupName);
-    SubMiloConfig config2(groupName);
+    SubMConfig config1(groupName);
+    SubMConfig config2(groupName);
 
     config1.zeroData();
     QVERIFY(!(config1 == config2));
@@ -116,7 +116,7 @@ void TestMiloConfig::testLoad2()
     QCOMPARE(config1, config2);
 }
 
-void TestMiloConfig::testSave2_data()
+void TestMConfig::testSave2_data()
 {
     QTest::addColumn<QByteArray>("groupName");
     QTest::newRow("SimpleGroupName") << QByteArray("TestGroup");
@@ -124,14 +124,14 @@ void TestMiloConfig::testSave2_data()
     QTest::newRow("Spaced GroupName") << QByteArray("Test Group");
 }
 
-void TestMiloConfig::testSave2()
+void TestMConfig::testSave2()
 {
     QFETCH(QByteArray, groupName);
-    SubMiloConfig config(groupName);
+    SubMConfig config(groupName);
     config.save(m_testConfigPath);
     QVERIFY(QFile::exists(m_testConfigPath));
 }
 
-QTEST_MAIN(TestMiloConfig)
+QTEST_MAIN(TestMConfig)
 
-//#include "tst_miloconfig.moc"
+//#include "tst_mconfig.moc"

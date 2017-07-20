@@ -28,13 +28,17 @@ SOFTWARE.
 #include <QRect>
 #include <QDateTime>
 
+#ifdef MCRYPT_LIB
+  #include "mcrypto.h"
+#endif
+
 /*!
  * \defgroup Config Configuration and settings
  * @{
  */
 
 /*!
- * \class MiloConfig
+ * \class MConfig
  * \brief Configuration object base
  *
  * Class provides simplified use for storing configurable values.
@@ -44,7 +48,7 @@ SOFTWARE.
  * a config file is created using QSettings. To load data from config file, use
  * load().
  *
- * Thus, MiloConfig can be used as both application config (with .ini file) or
+ * Thus, MConfig can be used as both application config (with .ini file) or
  * runtime-only config class. The choice is yours.
  *
  * Usage:
@@ -55,7 +59,7 @@ SOFTWARE.
  * QCoreApplication::applicationName set.
  */
 
-MiloConfig::MiloConfig(const QByteArray& groupName) :
+MConfig::MConfig(const QByteArray& groupName) :
     mGroupName(groupName)
 {
     //Nothing
@@ -64,7 +68,7 @@ MiloConfig::MiloConfig(const QByteArray& groupName) :
 /*!
  * \brief load all values using QSettings
  */
-void MiloConfig::load()
+void MConfig::load()
 {
     QSettings settings;
     settings.beginGroup(mGroupName);
@@ -75,11 +79,11 @@ void MiloConfig::load()
     }
 }
 /*!
- * \brief MiloConfig::load - overloaded function that allows load settings from specified file and format
+ * \brief MConfig::load - overloaded function that allows load settings from specified file and format
  * \param fileName
  * \param format
  */
-void MiloConfig::load(const QString &fileName, const QSettings::Format &format)
+void MConfig::load(const QString &fileName, const QSettings::Format &format)
 {
     QSettings settings(fileName, format);
     settings.beginGroup(mGroupName);
@@ -93,7 +97,7 @@ void MiloConfig::load(const QString &fileName, const QSettings::Format &format)
 /*!
  * \brief save all values using QSettings
  */
-void MiloConfig::save()
+void MConfig::save()
 {
     QSettings settings;
     settings.beginGroup(mGroupName);
@@ -104,11 +108,11 @@ void MiloConfig::save()
     }
 }
 /*!
- * \brief MiloConfig::save - overloaded function that allows save settings in specified file and format
+ * \brief MConfig::save - overloaded function that allows save settings in specified file and format
  * \param fileName
  * \param format
  */
-void MiloConfig::save(const QString &fileName, const QSettings::Format &format)
+void MConfig::save(const QString &fileName, const QSettings::Format &format)
 {
     QSettings settings(fileName, format);
     settings.beginGroup(mGroupName);
@@ -119,13 +123,75 @@ void MiloConfig::save(const QString &fileName, const QSettings::Format &format)
     }
 }
 
+#ifdef MCRYPT_LIB
+/*!
+ * \brief load all encrypted values using QSettings
+ */
+void MConfig::loadEncrypted()
+{
+    QSettings settings;
+    settings.beginGroup(mGroupName);
+    foreach (QByteArray key, mValues.keys()) {
+        QByteArray value = settings.value(MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase)).toByteArray();
+        copyValue(mValues.value(key).ptr,
+                  mValues.value(key).type,
+                   MCrypto::decrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
+    }
+}
+/*!
+ * \brief MConfig::load - overloaded function that allows load encrypted settings from specified file and format
+ * \param fileName
+ * \param format
+ */
+void MConfig::loadEncrypted(const QString &fileName, const QSettings::Format &format)
+{
+    QSettings settings(fileName, format);
+    settings.beginGroup(mGroupName);
+    foreach (QByteArray key, mValues.keys()) {
+      QByteArray value = settings.value(MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase)).toByteArray();
+      copyValue(mValues.value(key).ptr,
+                mValues.value(key).type,
+                 MCrypto::decrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
+    }
+}
+
+/*!
+ * \brief save all encrypted values using QSettings
+ */
+void MConfig::saveEncrypted()
+{
+    QSettings settings;
+    settings.beginGroup(mGroupName);
+    foreach (QByteArray key, mValues.keys()) {
+        QByteArray value = QVariant(mValues.value(key).type, mValues.value(key).ptr).toByteArray();
+        settings.setValue(MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase),
+                          MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
+    }
+}
+/*!
+ * \brief MConfig::save - overloaded function that allows save encrypted settings in specified file and format
+ * \param fileName
+ * \param format
+ */
+void MConfig::saveEncrypted(const QString &fileName, const QSettings::Format &format)
+{
+    QSettings settings(fileName, format);
+    settings.beginGroup(mGroupName);
+    foreach (QByteArray key, mValues.keys()) {
+        QByteArray value = QVariant(mValues.value(key).type, mValues.value(key).ptr).toByteArray();
+        settings.setValue(MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase),
+                          MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
+    }
+}
+#endif
+
 /*!
  * Returns path to file where settings are being saved.
  *
  * WARNING: path will be returned even if you don't actually call save() anywhere
  * (in which case the settings file will not be present at returned location).
  */
-QString MiloConfig::filePath() const
+QString MConfig::filePath() const
 {
     return QSettings().fileName();
 }
@@ -143,7 +209,7 @@ QString MiloConfig::filePath() const
     *ptr = value.value<type>();\
 } break;
 
-void MiloConfig::copyValue(void *dst, int type, const QVariant& value)
+void MConfig::copyValue(void *dst, int type, const QVariant& value)
 {
     if (value.isNull()) {
         return;

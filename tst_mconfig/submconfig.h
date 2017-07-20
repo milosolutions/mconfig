@@ -21,8 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef SUBMILOCONFIG_H
-#define SUBMILOCONFIG_H
+#ifndef SUBMCONFIG_H
+#define SUBMCONFIG_H
 
 #include <QPoint>
 #include <QPointF>
@@ -32,11 +32,11 @@ SOFTWARE.
 
 #include "mconfig.h"
 
-class SubMiloConfig : public MiloConfig
+class SubMConfig : public MConfig
 {
 public:
-    SubMiloConfig(QByteArray groupName);
-    ~SubMiloConfig();
+    SubMConfig(QByteArray groupName);
+    ~SubMConfig();
     void zeroData();
 
     bool testBool = true;
@@ -50,7 +50,7 @@ public:
     QRectF testRectF = QRectF(4.0f, 1.0f, 2.0f, 3.0f);
     QDateTime testDateTime = QDateTime::fromMSecsSinceEpoch(666);
 
-    bool operator==(const SubMiloConfig &rhs) const {
+    bool operator==(const SubMConfig &rhs) const {
         return (this->testBool == rhs.testBool &&
                 this->testInt == rhs.testInt &&
                 this->testString == rhs.testString &&
@@ -65,4 +65,4 @@ public:
 
 };
 
-#endif // SUBMILOCONFIG_H
+#endif // SUBMCONFIG_H

@@ -30,7 +30,7 @@ SOFTWARE.
 
 Q_LOGGING_CATEGORY(coreMain, "core.main")
 
-//! Example use of MiloConfig class
+//! Example use of MConfig class
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);

@@ -2,7 +2,7 @@ include(../mconfig.pri)
 
 QT -= gui
 
-TARGET = miloconfig
+TARGET = mconfig
 CONFIG += console
 CONFIG -= app_bundle
 

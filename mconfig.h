@@ -22,8 +22,8 @@ SOFTWARE.
 *******************************************************************************/
 
 
-#ifndef MILOCONFIG_H
-#define MILOCONFIG_H
+#ifndef MCONFIG_H
+#define MCONFIG_H
 
 #include <QHash>
 #include <QByteArray>
@@ -34,14 +34,21 @@ SOFTWARE.
 #define CONFIG_VALUE(name, type) \
         mValues.insert(#name, ValuePtr(type, static_cast<void*>(&name)));
 
-class MiloConfig
+class MConfig
 {
 public:
-    MiloConfig(const QByteArray& groupName);
+    MConfig(const QByteArray& groupName);
     void load();
     void load(const QString &fileName, const QSettings::Format &format = QSettings::IniFormat);
     void save();
     void save(const QString &fileName, const QSettings::Format &format = QSettings::IniFormat);
+
+#ifdef MCRYPT_LIB
+    void loadEncrypted();
+    void loadEncrypted(const QString &fileName, const QSettings::Format &format = QSettings::IniFormat);
+    void saveEncrypted();
+    void saveEncrypted(const QString &fileName, const QSettings::Format &format = QSettings::IniFormat);
+#endif
 
     QString filePath() const;
 
@@ -57,5 +64,9 @@ protected:
 private:
     const QByteArray mGroupName;
     static void copyValue(void *dst, int type, const QVariant& value);
+
+#ifdef MCRYPT_LIB
+    QByteArray mPassphrase;
+#endif
 };
-#endif // MILOCONFIG_H
+#endif // MCONFIG_H

@@ -12,3 +12,5 @@ SOURCES += $$PWD/mconfig.cpp
 
 DISTFILES += \
     $$PWD/AUTHORS.md
+
+DEFINES += MCONFIG_LIB

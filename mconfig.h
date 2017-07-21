@@ -43,14 +43,16 @@ public:
     void save();
     void save(const QString &fileName, const QSettings::Format &format = QSettings::IniFormat);
 
-#ifdef MCRYPT_LIB
+#ifdef MCRYPTO_LIB
     void loadEncrypted();
     void loadEncrypted(const QString &fileName, const QSettings::Format &format = QSettings::IniFormat);
     void saveEncrypted();
     void saveEncrypted(const QString &fileName, const QSettings::Format &format = QSettings::IniFormat);
-#endif
 
     QString filePath() const;
+#endif
+
+    void setPassphrase(const QByteArray& pass);
 
 protected:
     class ValuePtr {
@@ -65,7 +67,7 @@ private:
     const QByteArray mGroupName;
     static void copyValue(void *dst, int type, const QVariant& value);
 
-#ifdef MCRYPT_LIB
+#ifdef MCRYPTO_LIB
     QByteArray mPassphrase;
 #endif
 };

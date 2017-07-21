@@ -28,7 +28,7 @@ SOFTWARE.
 #include <QRect>
 #include <QDateTime>
 
-#ifdef MCRYPT_LIB
+#ifdef MCRYPTO_LIB
   #include "mcrypto.h"
 #endif
 
@@ -123,7 +123,7 @@ void MConfig::save(const QString &fileName, const QSettings::Format &format)
     }
 }
 
-#ifdef MCRYPT_LIB
+#ifdef MCRYPTO_LIB
 /*!
  * \brief load all encrypted values using QSettings
  */
@@ -132,7 +132,10 @@ void MConfig::loadEncrypted()
     QSettings settings;
     settings.beginGroup(mGroupName);
     foreach (QByteArray key, mValues.keys()) {
-        QByteArray value = settings.value(MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase)).toByteArray();
+        QByteArray rawKey = MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase);
+        QByteArray value = settings.value(rawKey).toByteArray();
+        if (value.isEmpty())
+            continue;
         copyValue(mValues.value(key).ptr,
                   mValues.value(key).type,
                    MCrypto::decrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
@@ -148,9 +151,10 @@ void MConfig::loadEncrypted(const QString &fileName, const QSettings::Format &fo
     QSettings settings(fileName, format);
     settings.beginGroup(mGroupName);
     foreach (QByteArray key, mValues.keys()) {
-      QByteArray value = settings.value(MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase)).toByteArray();
-      copyValue(mValues.value(key).ptr,
-                mValues.value(key).type,
+        QByteArray enc = MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase);
+        QByteArray value = settings.value(MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase)).toByteArray();
+        copyValue(mValues.value(key).ptr,
+                 mValues.value(key).type,
                  MCrypto::decrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
     }
 }
@@ -183,6 +187,16 @@ void MConfig::saveEncrypted(const QString &fileName, const QSettings::Format &fo
                           MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
     }
 }
+
+/*!
+ * \brief Sets passphrase for encrypting config
+ * \param Encryption passphrase
+ */
+void MConfig::setPassphrase(const QByteArray &pass)
+{
+    mPassphrase = pass;
+}
+
 #endif
 
 /*!

@@ -29,7 +29,8 @@ SOFTWARE.
 #include <QDateTime>
 
 #ifdef MCRYPTO_LIB
-  #include "mcrypto.h"
+    #include "mcrypto.h"
+    #include <QDataStream>
 #endif
 
 /*!
@@ -132,13 +133,19 @@ void MConfig::loadEncrypted()
     QSettings settings;
     settings.beginGroup(mGroupName);
     foreach (QByteArray key, mValues.keys()) {
-        QByteArray rawKey = MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase);
-        QByteArray value = settings.value(rawKey).toByteArray();
-        if (value.isEmpty())
-            continue;
+        QByteArray enc = MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase);
+        QByteArray value = settings.value(enc).toByteArray();
+        QByteArray valueDec = MCrypto::decrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase);
+
+        // deserialization of QVariant
+        valueDec = QByteArray::fromBase64(valueDec);
+        QDataStream ds(&valueDec,QIODevice::ReadOnly);
+        QVariant var;
+        ds >> var;
+
         copyValue(mValues.value(key).ptr,
-                  mValues.value(key).type,
-                   MCrypto::decrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
+                 mValues.value(key).type,
+                 var);
     }
 }
 /*!
@@ -152,10 +159,18 @@ void MConfig::loadEncrypted(const QString &fileName, const QSettings::Format &fo
     settings.beginGroup(mGroupName);
     foreach (QByteArray key, mValues.keys()) {
         QByteArray enc = MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase);
-        QByteArray value = settings.value(MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase)).toByteArray();
+        QByteArray value = settings.value(enc).toByteArray();
+        QByteArray valueDec = MCrypto::decrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase);
+
+        // deserialization of QVariant
+        valueDec = QByteArray::fromBase64(valueDec);
+        QDataStream ds(&valueDec,QIODevice::ReadOnly);
+        QVariant var;
+        ds >> var;
+
         copyValue(mValues.value(key).ptr,
                  mValues.value(key).type,
-                 MCrypto::decrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
+                 var);
     }
 }
 
@@ -167,7 +182,13 @@ void MConfig::saveEncrypted()
     QSettings settings;
     settings.beginGroup(mGroupName);
     foreach (QByteArray key, mValues.keys()) {
-        QByteArray value = QVariant(mValues.value(key).type, mValues.value(key).ptr).toByteArray();
+        // serialization of QVariant
+        QByteArray value;
+        QDataStream ds(&value,QIODevice::WriteOnly);
+        QVariant v =  QVariant(mValues.value(key).type, mValues.value(key).ptr);
+        ds << v;
+        value = value.toBase64();
+
         settings.setValue(MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase),
                           MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
     }
@@ -182,7 +203,13 @@ void MConfig::saveEncrypted(const QString &fileName, const QSettings::Format &fo
     QSettings settings(fileName, format);
     settings.beginGroup(mGroupName);
     foreach (QByteArray key, mValues.keys()) {
-        QByteArray value = QVariant(mValues.value(key).type, mValues.value(key).ptr).toByteArray();
+        // serialization of QVariant
+        QByteArray value;
+        QDataStream ds(&value,QIODevice::WriteOnly);
+        QVariant v =  QVariant(mValues.value(key).type, mValues.value(key).ptr);
+        ds << v;
+        value = value.toBase64();
+
         settings.setValue(MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase),
                           MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
     }

@@ -49,10 +49,10 @@ public:
     void saveEncrypted();
     void saveEncrypted(const QString &fileName, const QSettings::Format &format = QSettings::IniFormat);
 
-    QString filePath() const;
+    void setPassphrase(const QByteArray& pass);
 #endif
 
-    void setPassphrase(const QByteArray& pass);
+    QString filePath() const;
 
 protected:
     class ValuePtr {

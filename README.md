@@ -1,6 +1,8 @@
-\anchor MConfig
+[TOC]
 
 Milo Code DB main ([online](https://qtdocs.milosolutions.com/milo-code-db/main/) | [offline](\ref milodatabasemain))
+
+# Getting started
 
 MConfig is the reference config class for Milo projects.
 
@@ -15,6 +17,6 @@ Main features:
 For example usage, see main.cpp file. This project is fully docummented - please
 check doxygen docs or see the comments directly in the source file(s).
 
-# License # {#license}
+# License
 
 This project is licensed under the MIT License - see the LICENSE-MiloCodeDB.txt file for details

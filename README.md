@@ -2,6 +2,8 @@
 
 Milo Code DB main ([online](https://docs.milosolutions.com/milo-code-db/main/) | [offline](\ref milodatabasemain))
 
+[Source code](https://github.com/milosolutions/mcrypto)
+
 # Getting started
 
 MConfig is the reference config class for Milo projects.

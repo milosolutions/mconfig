@@ -2,7 +2,7 @@
 
 Milo Code DB main ([online](https://docs.milosolutions.com/milo-code-db/main/) | [offline](\ref milodatabasemain))
 
-[Source code](https://github.com/milosolutions/mcrypto)
+[Source code](https://github.com/milosolutions/mconfig)
 
 # Getting started
 

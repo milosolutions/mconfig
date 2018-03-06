@@ -21,16 +21,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-
 #include "mconfig.h"
-#include <QSettings>
+#include <QDateTime>
 #include <QPoint>
 #include <QRect>
-#include <QDateTime>
+#include <QSettings>
 
 #ifdef MCRYPTO_LIB
-    #include "mcrypto.h"
-    #include <QDataStream>
+#include <QDataStream>
+#include "mcrypto.h"
 #endif
 
 /*!
@@ -60,10 +59,9 @@ SOFTWARE.
  * QCoreApplication::applicationName set.
  */
 
-MConfig::MConfig(const QByteArray& groupName) :
-    mGroupName(groupName)
+MConfig::MConfig(const QByteArray &groupName) : mGroupName(groupName)
 {
-    //Nothing
+    // Nothing
 }
 
 /*!
@@ -72,26 +70,25 @@ MConfig::MConfig(const QByteArray& groupName) :
 void MConfig::load()
 {
     QSettings settings;
-    settings.beginGroup(mGroupName);
-    foreach (const QByteArray& key, mValues.keys()) {
-        copyValue(mValues.value(key).ptr,
-                  mValues.value(key).type,
-                  settings.value(key));
-    }
+    load(settings);
 }
 /*!
- * \brief MConfig::load - overloaded function that allows load settings from specified file and format
+ * \brief MConfig::load - overloaded function that allows load settings from specified file and
+ * format
  * \param fileName
  * \param format
  */
 void MConfig::load(const QString &fileName, const QSettings::Format &format)
 {
     QSettings settings(fileName, format);
-    settings.beginGroup(mGroupName);
-    foreach (const QByteArray& key, mValues.keys()) {
-        copyValue(mValues.value(key).ptr,
-                  mValues.value(key).type,
-                  settings.value(key));
+    load(settings);
+}
+
+void MConfig::load(QSettings& s)
+{
+    s.beginGroup(mGroupName);
+    for (const auto &key : mValues.keys()) {
+        copyValue(mValues.value(key).ptr, mValues.value(key).type, s.value(key));
     }
 }
 
@@ -101,12 +98,7 @@ void MConfig::load(const QString &fileName, const QSettings::Format &format)
 void MConfig::save()
 {
     QSettings settings;
-    settings.beginGroup(mGroupName);
-    foreach (const QByteArray& key, mValues.keys()) {
-        QVariant value(mValues.value(key).type,
-                       mValues.value(key).ptr);
-        settings.setValue(key, value);
-    }
+    save(settings);
 }
 /*!
  * \brief MConfig::save - overloaded function that allows save settings in specified file and format
@@ -116,11 +108,15 @@ void MConfig::save()
 void MConfig::save(const QString &fileName, const QSettings::Format &format)
 {
     QSettings settings(fileName, format);
-    settings.beginGroup(mGroupName);
-    foreach (const QByteArray& key, mValues.keys()) {
-        QVariant value(mValues.value(key).type,
-                       mValues.value(key).ptr);
-        settings.setValue(key, value);
+    save(settings);
+}
+
+void MConfig::save(QSettings& s)
+{
+    s.beginGroup(mGroupName);
+    for (const auto &key : mValues.keys()) {
+        QVariant value(mValues.value(key).type, mValues.value(key).ptr);
+        s.setValue(key, value);
     }
 }
 
@@ -139,17 +135,16 @@ void MConfig::loadEncrypted()
 
         // deserialization of QVariant
         valueDec = QByteArray::fromBase64(valueDec);
-        QDataStream ds(&valueDec,QIODevice::ReadOnly);
+        QDataStream ds(&valueDec, QIODevice::ReadOnly);
         QVariant var;
         ds >> var;
 
-        copyValue(mValues.value(key).ptr,
-                 mValues.value(key).type,
-                 var);
+        copyValue(mValues.value(key).ptr, mValues.value(key).type, var);
     }
 }
 /*!
- * \brief MConfig::load - overloaded function that allows load encrypted settings from specified file and format
+ * \brief MConfig::load - overloaded function that allows load encrypted settings from specified
+ * file and format
  * \param fileName
  * \param format
  */
@@ -164,13 +159,11 @@ void MConfig::loadEncrypted(const QString &fileName, const QSettings::Format &fo
 
         // deserialization of QVariant
         valueDec = QByteArray::fromBase64(valueDec);
-        QDataStream ds(&valueDec,QIODevice::ReadOnly);
+        QDataStream ds(&valueDec, QIODevice::ReadOnly);
         QVariant var;
         ds >> var;
 
-        copyValue(mValues.value(key).ptr,
-                 mValues.value(key).type,
-                 var);
+        copyValue(mValues.value(key).ptr, mValues.value(key).type, var);
     }
 }
 
@@ -184,8 +177,8 @@ void MConfig::saveEncrypted()
     foreach (QByteArray key, mValues.keys()) {
         // serialization of QVariant
         QByteArray value;
-        QDataStream ds(&value,QIODevice::WriteOnly);
-        QVariant v =  QVariant(mValues.value(key).type, mValues.value(key).ptr);
+        QDataStream ds(&value, QIODevice::WriteOnly);
+        QVariant v = QVariant(mValues.value(key).type, mValues.value(key).ptr);
         ds << v;
         value = value.toBase64();
 
@@ -194,7 +187,8 @@ void MConfig::saveEncrypted()
     }
 }
 /*!
- * \brief MConfig::save - overloaded function that allows save encrypted settings in specified file and format
+ * \brief MConfig::save - overloaded function that allows save encrypted settings in specified file
+ * and format
  * \param fileName
  * \param format
  */
@@ -205,8 +199,8 @@ void MConfig::saveEncrypted(const QString &fileName, const QSettings::Format &fo
     foreach (QByteArray key, mValues.keys()) {
         // serialization of QVariant
         QByteArray value;
-        QDataStream ds(&value,QIODevice::WriteOnly);
-        QVariant v =  QVariant(mValues.value(key).type, mValues.value(key).ptr);
+        QDataStream ds(&value, QIODevice::WriteOnly);
+        QVariant v = QVariant(mValues.value(key).type, mValues.value(key).ptr);
         ds << v;
         value = value.toBase64();
 
@@ -244,13 +238,14 @@ QString MConfig::filePath() const
  * \param value variant to be copied
  */
 
-#define COPY_TYPE(type) \
-{\
-    type *ptr = static_cast<type*>(dst);\
-    *ptr = value.value<type>();\
-} break;
+#define COPY_TYPE(type)                       \
+    {                                         \
+        type *ptr = static_cast<type *>(dst); \
+        *ptr = value.value<type>();           \
+    }                                         \
+    break;
 
-void MConfig::copyValue(void *dst, int type, const QVariant& value)
+void MConfig::copyValue(void *dst, int type, const QVariant &value)
 {
     if (value.isNull()) {
         return;
@@ -259,18 +254,28 @@ void MConfig::copyValue(void *dst, int type, const QVariant& value)
     Q_ASSERT(value.canConvert(type));
 
     switch (type) {
-    case QMetaType::Int:        COPY_TYPE(int)
-    case QMetaType::QByteArray: COPY_TYPE(QByteArray)
-    case QMetaType::QString:    COPY_TYPE(QString)
-    case QMetaType::Bool:       COPY_TYPE(bool)
-    case QMetaType::Float:      COPY_TYPE(float)
-    case QMetaType::QPoint:     COPY_TYPE(QPoint)
-    case QMetaType::QPointF:    COPY_TYPE(QPointF)
-    case QMetaType::QRect:      COPY_TYPE(QRect)
-    case QMetaType::QRectF:     COPY_TYPE(QRectF)
-    case QMetaType::QDateTime:  COPY_TYPE(QDateTime)
-    default:
-        qFatal("Config: type unsupported!");
+        case QMetaType::Int:
+            COPY_TYPE(int)
+        case QMetaType::QByteArray:
+            COPY_TYPE(QByteArray)
+        case QMetaType::QString:
+            COPY_TYPE(QString)
+        case QMetaType::Bool:
+            COPY_TYPE(bool)
+        case QMetaType::Float:
+            COPY_TYPE(float)
+        case QMetaType::QPoint:
+            COPY_TYPE(QPoint)
+        case QMetaType::QPointF:
+            COPY_TYPE(QPointF)
+        case QMetaType::QRect:
+            COPY_TYPE(QRect)
+        case QMetaType::QRectF:
+            COPY_TYPE(QRectF)
+        case QMetaType::QDateTime:
+            COPY_TYPE(QDateTime)
+        default:
+            qFatal("Config: type unsupported!");
     }
 }
 

@@ -27,11 +27,6 @@ SOFTWARE.
 #include <QRect>
 #include <QSettings>
 
-#ifdef MCRYPTO_LIB
-#include <QDataStream>
-#include "mcrypto.h"
-#endif
-
 /*!
  * \defgroup Config Configuration and settings
  * @{
@@ -59,176 +54,132 @@ SOFTWARE.
  * QCoreApplication::applicationName set.
  */
 
+/*!
+ * \param groupName group name for QSettings
+ * \sa groupName
+ */
 MConfig::MConfig(const QByteArray &groupName) : mGroupName(groupName)
 {
     // Nothing
 }
 
-/*!
- * \brief load all values using QSettings
- */
-void MConfig::load()
-{
-    QSettings settings;
-    load(settings);
-}
-/*!
- * \brief MConfig::load - overloaded function that allows load settings from specified file and
- * format
- * \param fileName
- * \param format
- */
-void MConfig::load(const QString &fileName, const QSettings::Format &format)
-{
-    QSettings settings(fileName, format);
-    load(settings);
-}
-
-void MConfig::load(QSettings& s)
-{
-    s.beginGroup(mGroupName);
-    for (const auto &key : mValues.keys()) {
-        copyValue(mValues.value(key).ptr, mValues.value(key).type, s.value(key));
-    }
-}
-
-/*!
- * \brief save all values using QSettings
- */
-void MConfig::save()
-{
-    QSettings settings;
-    save(settings);
-}
-/*!
- * \brief MConfig::save - overloaded function that allows save settings in specified file and format
- * \param fileName
- * \param format
- */
-void MConfig::save(const QString &fileName, const QSettings::Format &format)
-{
-    QSettings settings(fileName, format);
-    save(settings);
-}
-
-void MConfig::save(QSettings& s)
-{
-    s.beginGroup(mGroupName);
-    for (const auto &key : mValues.keys()) {
-        QVariant value(mValues.value(key).type, mValues.value(key).ptr);
-        s.setValue(key, value);
-    }
-}
-
 #ifdef MCRYPTO_LIB
 /*!
- * \brief load all encrypted values using QSettings
+ * \param groupName group name for QSettings
+ * \param passphrase secret password that will be used for encryption.
+ * 
+ * Using this constructor will be useful if you want to call load method in constructor of derived class
+ * and expect file to be encrypted. Available only if MCrypto module is added to project.
+ * \sa groupName, setPassphrase
  */
-void MConfig::loadEncrypted()
+MConfig::MConfig(const QByteArray &groupName, const QByteArray &passphrase)
+    : mGroupName(groupName), mcrypto(MCrypto::AES_256, MCrypto::CBC), mPassphrase(passphrase)
 {
-    QSettings settings;
-    settings.beginGroup(mGroupName);
-    foreach (QByteArray key, mValues.keys()) {
-        QByteArray enc = MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase);
-        QByteArray value = settings.value(enc).toByteArray();
-        QByteArray valueDec = MCrypto::decrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase);
-
-        // deserialization of QVariant
-        valueDec = QByteArray::fromBase64(valueDec);
-        QDataStream ds(&valueDec, QIODevice::ReadOnly);
-        QVariant var;
-        ds >> var;
-
-        copyValue(mValues.value(key).ptr, mValues.value(key).type, var);
-    }
-}
-/*!
- * \brief MConfig::load - overloaded function that allows load encrypted settings from specified
- * file and format
- * \param fileName
- * \param format
- */
-void MConfig::loadEncrypted(const QString &fileName, const QSettings::Format &format)
-{
-    QSettings settings(fileName, format);
-    settings.beginGroup(mGroupName);
-    foreach (QByteArray key, mValues.keys()) {
-        QByteArray enc = MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase);
-        QByteArray value = settings.value(enc).toByteArray();
-        QByteArray valueDec = MCrypto::decrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase);
-
-        // deserialization of QVariant
-        valueDec = QByteArray::fromBase64(valueDec);
-        QDataStream ds(&valueDec, QIODevice::ReadOnly);
-        QVariant var;
-        ds >> var;
-
-        copyValue(mValues.value(key).ptr, mValues.value(key).type, var);
-    }
-}
-
-/*!
- * \brief save all encrypted values using QSettings
- */
-void MConfig::saveEncrypted()
-{
-    QSettings settings;
-    settings.beginGroup(mGroupName);
-    foreach (QByteArray key, mValues.keys()) {
-        // serialization of QVariant
-        QByteArray value;
-        QDataStream ds(&value, QIODevice::WriteOnly);
-        QVariant v = QVariant(mValues.value(key).type, mValues.value(key).ptr);
-        ds << v;
-        value = value.toBase64();
-
-        settings.setValue(MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase),
-                          MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
-    }
-}
-/*!
- * \brief MConfig::save - overloaded function that allows save encrypted settings in specified file
- * and format
- * \param fileName
- * \param format
- */
-void MConfig::saveEncrypted(const QString &fileName, const QSettings::Format &format)
-{
-    QSettings settings(fileName, format);
-    settings.beginGroup(mGroupName);
-    foreach (QByteArray key, mValues.keys()) {
-        // serialization of QVariant
-        QByteArray value;
-        QDataStream ds(&value, QIODevice::WriteOnly);
-        QVariant v = QVariant(mValues.value(key).type, mValues.value(key).ptr);
-        ds << v;
-        value = value.toBase64();
-
-        settings.setValue(MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, key, mPassphrase),
-                          MCrypto::encrypt(MCrypto::AES_256, MCrypto::CBC, value, mPassphrase));
-    }
+    // Nothing
 }
 
 /*!
  * \brief Sets passphrase for encrypting config
  * \param Encryption passphrase
+ * 
+ * Providing passphrase means that configuration file will be encrypted if you call save method.
+ * Available only if MCrypto module is added to project.
  */
 void MConfig::setPassphrase(const QByteArray &pass)
 {
     mPassphrase = pass;
 }
-
 #endif
+
+/*!
+ * \brief load settings from
+ * \param fileName path to settings file
+ * \param format format of settings file
+ * 
+ * If \a fileName is empty default location will be used. Its specific for operating system.
+ * See [QSettings documentation](http://doc.qt.io/qt-5/qsettings.html#QSettings-4) for details.
+ * If file is encrypted you must provide password before calling this method.
+ */
+void MConfig::load(const QString &fileName, const QSettings::Format &format)
+{
+    auto loadFrom = [this](QSettings &settings) {
+        settings.beginGroup(mGroupName);
+        for (const auto &key : mValues.keys()) {
+            auto value = settings.value(key);
+#ifdef MCRYPTO_LIB
+            if (mPassphrase.size()) {
+                auto key_enc = mcrypto.encrypt(key, mPassphrase);
+                value = mcrypto.decrypt(settings.value(key_enc).toByteArray(), mPassphrase);
+            }
+#endif
+            copyValue(mValues.value(key).ptr, mValues.value(key).type, value);
+        }
+    };
+
+    if (fileName.isNull()) {
+        QSettings settings;
+        loadFrom(settings);
+    } else {
+        QSettings settings(fileName, format);
+        loadFrom(settings);
+        mFileName = fileName;
+    }
+}
+/*!
+ * \brief save settings to file
+ * \param fileName path to settings file
+ * \param format format of settings file
+ * 
+ * If \a fileName is empty default location will be used. Its specific for operating system.
+ * See [QSettings documentation](http://doc.qt.io/qt-5/qsettings.html#QSettings-4) for details.
+ * If file is meant to be encrypted you must provide password before calling this method.
+ */
+void MConfig::save(const QString &fileName, const QSettings::Format &format)
+{
+    auto saveTo = [this](QSettings &settings) {
+        settings.beginGroup(mGroupName);
+        for (auto key : mValues.keys()) {
+            auto value = QVariant(mValues.value(key).type, mValues.value(key).ptr);
+#ifdef MCRYPTO_LIB
+            if (mPassphrase.size()) {
+                key = mcrypto.encrypt(key, mPassphrase);
+                value = mcrypto.encrypt(value.toByteArray(), mPassphrase);
+            }
+#endif
+            settings.setValue(key, value);
+        }
+    };
+
+    if (fileName.isNull()) {
+        QSettings settings;
+        saveTo(settings);
+    } else {
+        QSettings settings(fileName, format);
+        saveTo(settings);
+    }
+}
 
 /*!
  * Returns path to file where settings are being saved.
  *
  * WARNING: path will be returned even if you don't actually call save() anywhere
  * (in which case the settings file will not be present at returned location).
+ * See also [QSettings documentation](http://doc.qt.io/qt-5/qsettings.html#fileName)
  */
 QString MConfig::filePath() const
 {
-    return QSettings().fileName();
+    return mFileName.isNull() ? QSettings().fileName() : mFileName;
+}
+
+/*!
+ * \brief current QSettings group name
+ * 
+ * This is group into which this object will save or load from.
+ * See [QSettings documentation](http://doc.qt.io/qt-5/qsettings.html#beginGroup) for more  details.
+ */
+const QByteArray &MConfig::groupName() const
+{
+    return mGroupName;
 }
 
 /*!

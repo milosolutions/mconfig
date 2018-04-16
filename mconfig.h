@@ -29,6 +29,9 @@ SOFTWARE.
 #include <QMetaType>
 #include <QSettings>
 #include <QString>
+#ifdef MCRYPTO_LIB
+#include "mcrypto.h"
+#endif
 
 #define CONFIG_VALUE(name, type) mValues.insert(#name, ValuePtr(type, static_cast<void *>(&name)));
 
@@ -36,26 +39,16 @@ class MConfig
 {
  public:
     MConfig(const QByteArray &groupName);
-    void load();
-    void load(const QString &fileName, const QSettings::Format &format = QSettings::IniFormat);
-    void save();
-    void save(const QString &fileName, const QSettings::Format &format = QSettings::IniFormat);
-
 #ifdef MCRYPTO_LIB
-    void loadEncrypted();
-    void loadEncrypted(const QString &fileName,
-                       const QSettings::Format &format = QSettings::IniFormat);
-    void saveEncrypted();
-    void saveEncrypted(const QString &fileName,
-                       const QSettings::Format &format = QSettings::IniFormat);
-    //TODO we can think of simpler interface
-    //if class is configured with mcrypto we need only to set passphrase
-    //and the rest can be done in private load/save methods: if passphrase is empty
-    //data are stored in plain mode if there is any passphrase set key/value will be encrypted
+    MConfig(const QByteArray &groupName, const QByteArray &passphrase);
     void setPassphrase(const QByteArray &pass);
 #endif
-
+    void load(const QString &fileName = QString(),
+              const QSettings::Format &format = QSettings::IniFormat);
+    void save(const QString &fileName = QString(),
+              const QSettings::Format &format = QSettings::IniFormat);
     QString filePath() const;
+    const QByteArray &groupName() const;
 
  protected:
     class ValuePtr
@@ -69,12 +62,12 @@ class MConfig
     QHash<QByteArray, ValuePtr> mValues;
 
  private:
-    void load(QSettings& s);
-    void save(QSettings& s);
     const QByteArray mGroupName;
+    QString mFileName;
     static void copyValue(void *dst, int type, const QVariant &value);
 
 #ifdef MCRYPTO_LIB
+    MCrypto mcrypto;
     QByteArray mPassphrase;
 #endif
 };

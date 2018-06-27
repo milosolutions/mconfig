@@ -24,33 +24,24 @@ SOFTWARE.
 #ifndef MCONFIG_H
 #define MCONFIG_H
 
-#include <QByteArray>
-#include <QHash>
-#include <QMetaType>
-#include <QSettings>
-#include <QString>
-#ifdef MCRYPTO_LIB
-#include "mcrypto.h"
-#endif
+#include <mbaseconfig.h>
 
 #define CONFIG_VALUE(name, type) mValues.insert(#name, ValuePtr(type, static_cast<void *>(&name)));
 
-class MConfig
+class MConfig : public MBaseConfig
 {
  public:
     MConfig(const QByteArray &groupName);
 #ifdef MCRYPTO_LIB
     MConfig(const QByteArray &groupName, const QByteArray &passphrase);
-    void setPassphrase(const QByteArray &pass);
 #endif
-    void load(const QString &fileName = QString(),
-              const QSettings::Format &format = QSettings::IniFormat);
-    void save(const QString &fileName = QString(),
-              const QSettings::Format &format = QSettings::IniFormat);
-    QString filePath() const;
-    const QByteArray &groupName() const;
 
  protected:
+    const QList<QByteArray> valueNames() const final;
+    QVariant value(const QByteArray &name) const final;
+    void setValue(const QByteArray &name, const QVariant &value) final;
+
+ private:
     class ValuePtr
     {
      public:
@@ -60,15 +51,6 @@ class MConfig
         void *ptr = nullptr;
     };
     QHash<QByteArray, ValuePtr> mValues;
-
- private:
-    const QByteArray mGroupName;
-    QString mFileName;
     static void copyValue(void *dst, int type, const QVariant &value);
-
-#ifdef MCRYPTO_LIB
-    MCrypto mcrypto;
-    QByteArray mPassphrase;
-#endif
 };
 #endif  // MCONFIG_H

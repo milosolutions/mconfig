@@ -22,6 +22,7 @@ private:                                \
 
 class MMetaConfig : public QObject, public MBaseConfig
 {
+    Q_OBJECT
 public:
     MMetaConfig(const QByteArray &groupName);
 #ifdef MCRYPTO_LIB

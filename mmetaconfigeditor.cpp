@@ -89,8 +89,8 @@ void MMetaConfigEditor::init()
         if (m_config) loadAll();
     });
     m_save = new QPushButton;
-    m_load->setText(tr("Save"));
-    m_load->setToolTip(tr("Save settings on this page"));
+    m_save->setText(tr("Save"));
+    m_save->setToolTip(tr("Save settings on this page"));
     m_layout_buttons->addWidget(m_save);
     connect(m_save, &QAbstractButton::clicked, this, [this](){
         if (m_config) m_config->save();

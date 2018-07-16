@@ -37,11 +37,11 @@ class MConfig : public MBaseConfig
 #endif
 
  protected:
-    const QList<QByteArray> valueNames() const final;
+    QList<QByteArray> valueNames() const final;
     QVariant value(const QByteArray &name) const final;
     void setValue(const QByteArray &name, const QVariant &value) final;
 
- private:
+protected:
     class ValuePtr
     {
      public:
@@ -51,6 +51,8 @@ class MConfig : public MBaseConfig
         void *ptr = nullptr;
     };
     QHash<QByteArray, ValuePtr> mValues;
+
+ private:
     static void copyValue(void *dst, int type, const QVariant &value);
 };
 #endif  // MCONFIG_H

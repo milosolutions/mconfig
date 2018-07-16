@@ -15,10 +15,9 @@
  * class SimpleConfig : public MMetaConfig
  * {
  *    Q_OBJECT
+ *    M_OBJECT(SimpleConfig, "category_name")
  *    M_MEMBER(int value)
  *    M_MEMBER_V(QString text "default value")
- * public:
- *    SimpleConfig() : MMetaConfig("category_name") {}
  * };
  * \endcode
  */
@@ -26,19 +25,19 @@
 
 MMetaConfig::MMetaConfig(const QByteArray &groupName) : MBaseConfig(groupName)
 {
-    init();
+    // Nothing
 }
 
 #ifdef MCRYPTO_LIB
 MMetaConfig::MMetaConfig(const QByteArray &groupName, const QByteArray &passphrase)
     : MBaseConfig(groupName, passphrase)
 {
-    init();
+    // Nothing
 }
 #endif
 
 
-const QList<QByteArray> MMetaConfig::valueNames() const
+QList<QByteArray> MMetaConfig::valueNames() const
 {
     return m_names;
 }
@@ -57,9 +56,9 @@ void MMetaConfig::setValue(const QByteArray &name, const QVariant &value)
  * Gather names of all properties for MBaseConfig.
  * Read only properties defined for this object.
  */
-void MMetaConfig::init()
+void MMetaConfig::init(const QMetaObject *object)
 {
-    for (int i = metaObject()->propertyOffset(); i < metaObject()->propertyCount(); ++i) {
-        m_names.append(metaObject()->property(i).name());
+    for (int i = object->propertyOffset(); i < object->propertyCount(); ++i) {
+        m_names.append(object->property(i).name());
     }
 }

@@ -47,9 +47,12 @@ void MMetaConfigEditor::load(MMetaConfig *config)
  * each time this widget is shown. If mode is disabled, "Load" button appears
  * and it must be clicked manually. Default: disabled.
  */
-void MMetaConfigEditor::setAutoLoad(bool /*on*/)
+void MMetaConfigEditor::setAutoLoad(bool on)
 {
-    //TODO
+    if (on != m_autoLoad) {
+        m_load->setVisible(!on);
+        m_autoLoad = on;
+    }
 }
 
 /*!
@@ -59,10 +62,14 @@ void MMetaConfigEditor::setAutoLoad(bool /*on*/)
  * each time this widget is hidden. If mode is disabled, "Save" button appears
  * and it must be clicked manually. Default: disabled.
  */
-void MMetaConfigEditor::MMetaConfigEditor::setAutoSave(bool /*on*/)
+void MMetaConfigEditor::MMetaConfigEditor::setAutoSave(bool on)
 {
-    //TODO
+    if (on != m_autoSave) {
+        m_save->setVisible(!on);
+        m_autoSave = on;
+    }
 }
+
 
 void MMetaConfigEditor::showEvent(QShowEvent *event)
 {
@@ -81,14 +88,14 @@ void MMetaConfigEditor::init()
     m_layout_editors = new QFormLayout;
     m_layout_buttons = new QHBoxLayout;
     m_layout_buttons->addStretch();
-    m_load = new QPushButton;
+    m_load = new QPushButton(this);
     m_load->setText(tr("Load"));
     m_load->setToolTip(tr("Load settings on this page"));
     m_layout_buttons->addWidget(m_load);
     connect(m_load, &QAbstractButton::clicked, this, [this](){
         if (m_config) loadAll();
     });
-    m_save = new QPushButton;
+    m_save = new QPushButton(this);
     m_save->setText(tr("Save"));
     m_save->setToolTip(tr("Save settings on this page"));
     m_layout_buttons->addWidget(m_save);

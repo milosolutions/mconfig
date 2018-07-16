@@ -4,6 +4,11 @@
 #include <QObject>
 #include "mbaseconfig.h"
 
+// Category macro
+#define M_OBJECT(object, category) \
+public:                            \
+    object() : MMetaConfig(category) { init(metaObject()); }
+
 //Config member macro
 #define M_MEMBER(type, name) \
 public:                        \
@@ -29,11 +34,11 @@ public:
     MMetaConfig(const QByteArray &groupName, const QByteArray &passphrase);
 #endif
 protected:
-   const QList<QByteArray> valueNames() const final;
+   QList<QByteArray> valueNames() const final;
    QVariant value(const QByteArray &name) const final;
    void setValue(const QByteArray &name, const QVariant &value) final;
+   void init(const QMetaObject *object);
 private:
-    void init();
     QList<QByteArray> m_names;
 };
 

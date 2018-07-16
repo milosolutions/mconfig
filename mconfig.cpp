@@ -73,7 +73,7 @@ MConfig::MConfig(const QByteArray &groupName, const QByteArray &passphrase)
 }
 #endif
 
-const QList<QByteArray> MConfig::valueNames() const
+QList<QByteArray> MConfig::valueNames() const
 {
     return mValues.keys();
 }

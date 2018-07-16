@@ -26,7 +26,7 @@ public:
    const QByteArray &groupName() const;
 
 protected:
-   virtual const QList<QByteArray> valueNames() const = 0;
+   virtual QList<QByteArray> valueNames() const = 0;
    virtual QVariant value(const QByteArray &name) const = 0;
    virtual void setValue(const QByteArray &name, const QVariant &value) = 0;
 

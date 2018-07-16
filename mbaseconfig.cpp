@@ -68,7 +68,7 @@ MBaseConfig::MBaseConfig(const QByteArray &groupName) : mGroupName(groupName)
 
 #ifdef MCRYPTO_LIB
 MBaseConfig::MBaseConfig(const QByteArray &groupName, const QByteArray &passphrase)
-    : mGroupName(groupName), mcrypto(MCrypto::AES_256, MCrypto::CBC), mPassphrase(passphrase)
+    : mGroupName(groupName), mPassphrase(passphrase)
 {
     // Nothing
 }

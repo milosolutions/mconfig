@@ -5,9 +5,9 @@
 #include "mbaseconfig.h"
 
 // Category macro
-#define M_OBJECT(object, category) \
+#define M_OBJECT(object) \
 public:                            \
-    object() : MMetaConfig(category) { init(metaObject()); }
+    object() : MMetaConfig(#object) { init(metaObject()); }
 
 //Config member macro
 #define M_MEMBER(type, name) \

@@ -15,11 +15,17 @@
  * class SimpleConfig : public MMetaConfig
  * {
  *    Q_OBJECT
- *    M_OBJECT(SimpleConfig, "category_name")
+ *    M_OBJECT(SimpleConfig)
  *    M_MEMBER(int value)
  *    M_MEMBER_V(QString text "default value")
  * };
  * \endcode
+ *
+ * ### Hint on member naming
+ * There is no limitation on member names. However MMetaConfigEditor is designed in
+ * a way that will replace "_" in name with space (" "). This allow for nice ui generation.
+ * So your property is named "path_to_important_file" in MMetaConfig based class,
+ * then MMetaConfigEditor will produce label "path to important file".
  */
 
 

@@ -1,8 +1,6 @@
 [TOC]
 
-Milo Code DB main ([online](https://docs.milosolutions.com/milo-code-db/main/) | [offline](\ref milodatabasemain))
-
-[Source code](https://github.com/milosolutions/mconfig)
+Milo Code DB main ([online](https://qtdocs.milosolutions.com/milo-code-db/main/) | [offline](\ref milodatabasemain))
 
 # Getting started
 
@@ -18,6 +16,12 @@ Main features:
 
 For example usage, see main.cpp file. This project is fully docummented - please
 check doxygen docs or see the comments directly in the source file(s).
+
+### MMetaConfig
+
+This is flavor of config class that is designed for easy generation of ui for editing values of config.
+Basic editor is provided under the name MMetaConfigEditor. To use it in project add `CONFIG += mconfig-editors`
+before including mconfig.pri file.
 
 # License
 

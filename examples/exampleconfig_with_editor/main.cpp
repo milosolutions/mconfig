@@ -21,38 +21,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef MCONFIG_H
-#define MCONFIG_H
 
-#include <mbaseconfig.h>
+#include "exampleconfig.h"
+#include "editors/mmetaconfigeditor.h"
+#include <QApplication>
+#include <QLoggingCategory>
+#include <QDebug>
 
-#define CONFIG_VALUE(name, type) mValues.insert(#name, ValuePtr(type, static_cast<void *>(&name)));
+Q_LOGGING_CATEGORY(coreMain, "core.main")
 
-class MConfig : public MBaseConfig
+//! Example use of MConfig class
+int main(int argc, char *argv[])
 {
- public:
-    MConfig(const QByteArray &groupName);
-#ifdef MCRYPTO_LIB
-    MConfig(const QByteArray &groupName, const QByteArray &passphrase);
-#endif
+    QApplication a(argc, argv);
+    // Application name and organization should be set
+    // otherwise you must explicitely provide file for save method (line 44)
+    a.setApplicationName("examples.MMetaConfigEditor");
+    a.setOrganizationName("Milo Solutions");
 
- protected:
-    QList<QByteArray> valueNames() const final;
-    QVariant value(const QByteArray &name) const final;
-    void setValue(const QByteArray &name, const QVariant &value) final;
-
-protected:
-    class ValuePtr
-    {
-     public:
-        ValuePtr() {}
-        ValuePtr(int t, void *v) : type(t), ptr(v) {}
-        int type = QMetaType::UnknownType;
-        void *ptr = nullptr;
-    };
-    QHash<QByteArray, ValuePtr> mValues;
-
- private:
-    static void copyValue(void *dst, int type, const QVariant &value);
-};
-#endif  // MCONFIG_H
+    ExampleConfig example;
+    example.example_value = 12345; // this member has no default value in header
+    example.save(); // save values on disk
+    MMetaConfigEditor editor(&example);
+    // optional settings - check documentation
+    //editor.setAutoLoad(true);
+    //editor.setAutoSave(true);
+    editor.show();
+    return a.exec();
+}

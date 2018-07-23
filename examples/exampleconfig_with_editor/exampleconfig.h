@@ -21,38 +21,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 *******************************************************************************/
 
-#ifndef MCONFIG_H
-#define MCONFIG_H
 
-#include <mbaseconfig.h>
+#ifndef EXAMPLECONFIG_H
+#define EXAMPLECONFIG_H
 
-#define CONFIG_VALUE(name, type) mValues.insert(#name, ValuePtr(type, static_cast<void *>(&name)));
+#include "mmetaconfig.h"
 
-class MConfig : public MBaseConfig
+#include <QByteArray>
+
+class ExampleConfig : public MMetaConfig
 {
- public:
-    MConfig(const QByteArray &groupName);
-#ifdef MCRYPTO_LIB
-    MConfig(const QByteArray &groupName, const QByteArray &passphrase);
-#endif
-
- protected:
-    QList<QByteArray> valueNames() const final;
-    QVariant value(const QByteArray &name) const final;
-    void setValue(const QByteArray &name, const QVariant &value) final;
-
-protected:
-    class ValuePtr
-    {
-     public:
-        ValuePtr() {}
-        ValuePtr(int t, void *v) : type(t), ptr(v) {}
-        int type = QMetaType::UnknownType;
-        void *ptr = nullptr;
-    };
-    QHash<QByteArray, ValuePtr> mValues;
-
- private:
-    static void copyValue(void *dst, int type, const QVariant &value);
+    Q_OBJECT
+    M_OBJECT(ExampleConfig)
+    M_MEMBER(int, example_value)
+    M_MEMBER_V(QByteArray, example_string,  "Milo is great")
 };
-#endif  // MCONFIG_H
+
+#endif // EXAMPLECONFIG_H

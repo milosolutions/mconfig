@@ -25,7 +25,7 @@ SOFTWARE.
 #ifndef EXAMPLECONFIG_H
 #define EXAMPLECONFIG_H
 
-#include "../mconfig.h"
+#include "mconfig.h"
 
 #include <QByteArray>
 

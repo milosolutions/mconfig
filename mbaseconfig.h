@@ -31,11 +31,11 @@ protected:
    virtual void setValue(const QByteArray &name, const QVariant &value) = 0;
 
 private:
-   const QByteArray mGroupName;
-   QString mFileName;
+   const QByteArray m_groupName;
+   QString m_fileName;
 #ifdef MCRYPTO_LIB
-   MCrypto mcrypto;
-   QByteArray mPassphrase;
+   MCrypto m_crypto;
+   QByteArray m_passphrase;
 #endif
 };
 

@@ -61,14 +61,14 @@ SOFTWARE.
  * You must implement this class if you provide your implementation of MBaseConfig interface.
  */
 
-MBaseConfig::MBaseConfig(const QByteArray &groupName) : mGroupName(groupName)
+MBaseConfig::MBaseConfig(const QByteArray &groupName) : m_groupName(groupName)
 {
     // Nothing
 }
 
 #ifdef MCRYPTO_LIB
 MBaseConfig::MBaseConfig(const QByteArray &groupName, const QByteArray &passphrase)
-    : mGroupName(groupName), mPassphrase(passphrase)
+    : m_groupName(groupName), m_gassphrase(passphrase)
 {
     // Nothing
 }
@@ -82,7 +82,7 @@ MBaseConfig::MBaseConfig(const QByteArray &groupName, const QByteArray &passphra
  */
 void MBaseConfig::setPassphrase(const QByteArray &pass)
 {
-    mPassphrase = pass;
+    m_passphrase = pass;
 }
 #endif
 
@@ -95,13 +95,15 @@ void MBaseConfig::setPassphrase(const QByteArray &pass)
 void MBaseConfig::load(const QString &fileName, const QSettings::Format &format)
 {
     auto loadFrom = [this](QSettings &settings) {
-        settings.beginGroup(mGroupName);
-        for (const auto &key : valueNames()) {
+        settings.beginGroup(m_groupName);
+        const auto &values = valueNames();
+        for (const auto &key : values) {
             auto val = settings.value(key);
 #ifdef MCRYPTO_LIB
-            if (mPassphrase.size()) {
-                auto key_enc = mcrypto.encrypt(key, mPassphrase);
-                val = mcrypto.decrypt(settings.value(key_enc).toByteArray(), mPassphrase);
+            if (m_passphrase.size()) {
+                auto key_enc = m_crypto.encrypt(key, m_passphrase);
+                val = m_crypto.decrypt(settings.value(key_enc).toByteArray(),
+                                       m_passphrase);
             }
 #endif
             setValue(key, val);
@@ -114,9 +116,10 @@ void MBaseConfig::load(const QString &fileName, const QSettings::Format &format)
     } else {
         QSettings settings(fileName, format);
         loadFrom(settings);
-        mFileName = fileName;
+        m_fileName = fileName;
     }
 }
+
 /*!
  * \brief MBaseConfig::save - overloaded function that allows save settings in specified file and format
  * \param fileName
@@ -125,13 +128,14 @@ void MBaseConfig::load(const QString &fileName, const QSettings::Format &format)
 void MBaseConfig::save(const QString &fileName, const QSettings::Format &format)
 {
     auto saveTo = [this](QSettings &settings) {
-        settings.beginGroup(mGroupName);
-        for (auto key : valueNames()) {
+        settings.beginGroup(m_groupName);
+        const auto &values = valueNames();
+        for (auto key : values) {
             auto val = value(key);
 #ifdef MCRYPTO_LIB
-            if (mPassphrase.size()) {
-                key = mcrypto.encrypt(key, mPassphrase);
-                val = mcrypto.encrypt(val.toByteArray(), mPassphrase);
+            if (m_passphrase.size()) {
+                key = m_crypto.encrypt(key, m_passphrase);
+                val = m_crypto.encrypt(val.toByteArray(), m_passphrase);
             }
 #endif
             settings.setValue(key, val);
@@ -155,12 +159,12 @@ void MBaseConfig::save(const QString &fileName, const QSettings::Format &format)
  */
 QString MBaseConfig::filePath() const
 {
-    return mFileName.isNull() ? QSettings().fileName() : mFileName;
+    return m_fileName.isNull() ? QSettings().fileName() : m_fileName;
 }
 
 const QByteArray &MBaseConfig::groupName() const
 {
-    return mGroupName;
+    return m_groupName;
 }
 
 /*! @} */

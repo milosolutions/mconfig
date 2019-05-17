@@ -1,4 +1,4 @@
-include(../mconfig.pri)
+include(../../mconfig.pri)
 
 QT -= gui
 

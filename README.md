@@ -1,6 +1,9 @@
-[TOC]
+MConfig
+===
 
-Milo Code DB main ([online](https://qtdocs.milosolutions.com/milo-code-db/main/) | [offline](\ref milodatabasemain))
+[Online documentation](https://docs.milosolutions.com/milo-code-db/mconfig)
+
+[Source code](https://github.com/milosolutions/mconfig)
 
 # Getting started
 

@@ -1,6 +1,8 @@
 QT += core
 CONFIG += c++11
 DEFINES *= QT_USE_QSTRINGBUILDER
+#uncomment it if you want encryption
+#DEFINES *= MCRYPTO_LIB
 
 INCLUDEPATH += $$PWD
 

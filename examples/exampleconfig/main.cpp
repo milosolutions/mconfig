@@ -41,7 +41,12 @@ int main(int argc, char *argv[])
     qCDebug(coreMain) << "Application name is:" << a.applicationName();
     qCDebug(coreMain) << "Example value is:" << example.exampleValue;
     qCDebug(coreMain) << "Example string is:" << example.exampleString;
-    qCDebug(coreMain) << "Config file will be saved to:" << example.filePath();
+    qCDebug(coreMain) << "Config file would be saved to:" << example.filePath();
+    qCDebug(coreMain) << "Uncomment load and save in ExampleConfig class";
+    qCDebug(coreMain) << "if you actually want to create and use config file. ";
+    qCDebug(coreMain) << "Uncomment DEFINES += MCRYPTO_LIB in mconfig.pri file";
+    qCDebug(coreMain) << "and add mcrypto to this example project (exampleconfig.pro)";
+    qCDebug(coreMain) << "if you want to encrypt your config";
 
-    return a.exec();
+    return 0;
 }

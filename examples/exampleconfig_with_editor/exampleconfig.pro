@@ -1,5 +1,6 @@
 TARGET = mconfig
 TEMPLATE = app
+#CONFIG += MCRYPTO_LIB
 CONFIG += mconfig-editors
 include(../../mconfig.pri)
 

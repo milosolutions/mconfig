@@ -26,6 +26,12 @@ This is flavor of config class that is designed for easy generation of ui for ed
 Basic editor is provided under the name MMetaConfigEditor. To use it in project add `CONFIG += mconfig-editors`
 before including mconfig.pri file.
 
+
+### Encryption
+
+Is is possible to encrypt your config file! To enable it simply add MCrypto library to your project (include mcrypto.pri)
+and set MCRYPTO_LIB flag (DEFINES += MCRYPTO_LIB)
+
 # License
 
 This project is licensed under the MIT License - see the LICENSE-MiloCodeDB.txt file for details

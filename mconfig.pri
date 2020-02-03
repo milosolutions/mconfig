@@ -1,36 +1,37 @@
-QT += core
-CONFIG += c++11
+QT *= core
+CONFIG *= c++11
 DEFINES *= QT_USE_QSTRINGBUILDER
 #uncomment it if you want encryption
 #DEFINES *= MCRYPTO_LIB
 
-INCLUDEPATH += $$PWD
+INCLUDEPATH *= $$PWD
 
-OTHER_FILES += $$PWD/README.md $$PWD/mconfig.doxyfile
+OTHER_FILES *= $$PWD/README.md $$PWD/mconfig.doxyfile
 
-HEADERS += \
+HEADERS *= \
     $$PWD/mbaseconfig.h \
     $$PWD/mconfig.h \
     $$PWD/mmetaconfig.h
 
-SOURCES += \
+SOURCES *= \
     $$PWD/mbaseconfig.cpp \
     $$PWD/mconfig.cpp \
     $$PWD/mmetaconfig.cpp
 
 mconfig-editors {
-QT += gui widgets
-HEADERS += \
+QT *= gui widgets
+HEADERS *= \
     $$PWD/editors/mmetaconfigeditor.h \
     $$PWD/editors/propertyeditor.h \
     $$PWD/editors/stringeditor.h
-SOURCES += \
+
+SOURCES *= \
     $$PWD/editors/mmetaconfigeditor.cpp \
     $$PWD/editors/propertyeditor.cpp \
     $$PWD/editors/stringeditor.cpp
 }
 
-DISTFILES += \
+DISTFILES *= \
     $$PWD/AUTHORS.md
 
-DEFINES += MCONFIG_LIB
+DEFINES *= MCONFIG_LIB

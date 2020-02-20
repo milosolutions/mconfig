@@ -11,7 +11,7 @@ set(SOURCES mbaseconfig.h mbaseconfig.cpp mconfig.h mconfig.cpp
   mmetaconfig.h mmetaconfig.cpp
 )
 
-option (mconfig-editors "Build GUI (QtWidgets) config editors" OFF)
+option (mconfig-editors "MConfig: Build GUI (QtWidgets) config editors" OFF)
 
 if(mconfig-editors)
   find_package(Qt5 COMPONENTS REQUIRED Widgets)

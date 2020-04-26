@@ -25,6 +25,7 @@ SOFTWARE.
 #include <QDateTime>
 #include <QPoint>
 #include <QRect>
+#include <QUrl>
 #include <QSettings>
 
 /*!
@@ -131,6 +132,8 @@ void MConfig::copyValue(void *dst, int type, const QVariant &value)
             COPY_TYPE(QRectF)
         case QMetaType::QDateTime:
             COPY_TYPE(QDateTime)
+        case QMetaType::QUrl:
+            COPY_TYPE(QUrl)
         default:
             qFatal("Config: type unsupported!");
     }

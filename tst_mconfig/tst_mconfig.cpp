@@ -169,7 +169,7 @@ void TestMConfig::testSaveEncrypted1()
 {
     QFETCH(QByteArray, groupName);
     SubMConfig config(groupName);
-    config.saveEncrypted();
+    config.save();
 #ifdef _WIN32
     // Checking if registry path exists (only possible using Windows API)
     HKEY hk;
@@ -191,7 +191,7 @@ void TestMConfig::testLoadEncrypted1()
     QFETCH(QByteArray, groupName);
     SubMConfig config1(groupName);
     config1.zeroData();
-    config1.loadEncrypted();
+    config1.load();
 
     SubMConfig config2(groupName);
 
@@ -211,7 +211,7 @@ void TestMConfig::testLoadEncrypted2()
 
     config1.zeroData();
     QVERIFY(!(config1 == config2));
-    config1.loadEncrypted();
+    config1.load();
     QCOMPARE(config1, config2);
 }
 
@@ -225,7 +225,7 @@ void TestMConfig::testSaveEncrypted2()
 {
     QFETCH(QByteArray, groupName);
     SubMConfig config(groupName);
-    config.saveEncrypted(m_testConfigPath);
+    config.save(m_testConfigPath);
     QVERIFY(QFile::exists(m_testConfigPath));
 }
 #endif

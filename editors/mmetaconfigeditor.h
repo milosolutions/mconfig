@@ -28,11 +28,11 @@ private:
     void loadAll();
     bool m_autoLoad{false};
     bool m_autoSave{false};
-    QFormLayout *m_layout_editors;
-    QHBoxLayout *m_layout_buttons;
-    QAbstractButton *m_load;
-    QAbstractButton *m_save;
-    MMetaConfig *m_config{nullptr};
+    QFormLayout *m_layout_editors = nullptr;
+    QHBoxLayout *m_layout_buttons = nullptr;
+    QAbstractButton *m_load = nullptr;
+    QAbstractButton *m_save = nullptr;
+    MMetaConfig *m_config = nullptr;
     QHash<const char*,PropertyEditor*> m_editors;
 };
 

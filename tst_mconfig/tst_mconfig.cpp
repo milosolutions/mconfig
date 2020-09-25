@@ -120,7 +120,7 @@ void TestMConfig::testSave1()
     // Checking if registry path exists (only possible using Windows API)
     HKEY hk;
     QString str = config.filePath().remove("\\HKEY_CURRENT_USER\\");
-    LONG result = RegOpenKeyEx(HKEY_CURRENT_USER, reinterpret_cast<LPCWSTR>(str.utf16()), 0, KEY_READ, &hk);
+    LONG result = RegOpenKeyEx(HKEY_CURRENT_USER, reinterpret_cast<LPCSTR>(str.toUtf8().data()), 0, KEY_READ, &hk);
     QCOMPARE(result, ERROR_SUCCESS);
 #else
     QVERIFY(QFile::exists(config.filePath()));

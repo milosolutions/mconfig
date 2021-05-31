@@ -6,7 +6,7 @@
 #include <QMetaType>
 #include <QSettings>
 #include <QString>
-#ifdef MCRYPTO_LIB
+#ifdef CRYPTED_CONFIG
 #include "mcrypto.h"
 #endif
 
@@ -14,10 +14,11 @@ class MBaseConfig
 {
 public:
    MBaseConfig(const QByteArray &groupName);
-#ifdef MCRYPTO_LIB
+#ifdef CRYPTED_CONFIG
    MBaseConfig(const QByteArray &groupName, const QByteArray &passphrase);
    void setPassphrase(const QByteArray &pass);
 #endif
+   virtual ~MBaseConfig() = default;
    void load(const QString &fileName = QString(),
              const QSettings::Format &format = QSettings::IniFormat);
    void save(const QString &fileName = QString(),
@@ -33,7 +34,7 @@ protected:
 private:
    const QByteArray m_groupName;
    QString m_fileName;
-#ifdef MCRYPTO_LIB
+#ifdef CRYPTED_CONFIG
    MCrypto m_crypto;
    QByteArray m_passphrase;
 #endif

@@ -66,7 +66,7 @@ MBaseConfig::MBaseConfig(const QByteArray &groupName) : m_groupName(groupName)
     // Nothing
 }
 
-#ifdef MCRYPTO_LIB
+#ifdef CRYPTED_CONFIG
 MBaseConfig::MBaseConfig(const QByteArray &groupName, const QByteArray &passphrase)
     : m_groupName(groupName), m_passphrase(passphrase)
 {
@@ -99,7 +99,7 @@ void MBaseConfig::load(const QString &fileName, const QSettings::Format &format)
         const auto &values = valueNames();
         for (const auto &key : values) {
             auto val = settings.value(key);
-#ifdef MCRYPTO_LIB
+#ifdef CRYPTED_CONFIG
             if (m_passphrase.size()) {
                 auto key_enc = m_crypto.encrypt(key, m_passphrase);
                 val = m_crypto.decrypt(settings.value(key_enc).toByteArray(),
@@ -132,7 +132,7 @@ void MBaseConfig::save(const QString &fileName, const QSettings::Format &format)
         const auto &values = valueNames();
         for (auto key : values) {
             auto val = value(key);
-#ifdef MCRYPTO_LIB
+#ifdef CRYPTED_CONFIG
             if (m_passphrase.size()) {
                 key = m_crypto.encrypt(key, m_passphrase);
                 val = m_crypto.encrypt(val.toByteArray(), m_passphrase);

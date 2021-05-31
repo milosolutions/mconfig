@@ -14,15 +14,14 @@ find_package(Qt5 COMPONENTS REQUIRED Core)
 
 set(CMAKE_AUTOMOC ON)
 
-set(SOURCES mbaseconfig.h mbaseconfig.cpp mconfig.h mconfig.cpp
-  mmetaconfig.h mmetaconfig.cpp
-)
+set(SOURCES mbaseconfig.h mbaseconfig.cpp mconfig.h mconfig.cpp)
 
 option(mconfig-editors "MConfig: Build GUI (QtWidgets) config editors" OFF)
 
 if(mconfig-editors)
   find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets)
   list(APPEND SOURCES
+    mmetaconfig.h mmetaconfig.cpp
     editors/mmetaconfigeditor.h editors/mmetaconfigeditor.cpp
     editors/propertyeditor.h editors/propertyeditor.cpp
     editors/stringeditor.h editors/stringeditor.cpp)
@@ -42,18 +41,16 @@ target_compile_definitions(mconfig PUBLIC MCONFIG_LIB)
 
 option(mconfig-crypto "MConfig: Build with encryption functions" OFF)
 if(mconfig-crypto)
+  message("MConfig: using encryption library")
+  target_compile_definitions(mconfig PRIVATE CRYPTED_CONFIG)
   target_link_libraries(mconfig mcrypto)
 endif(mconfig-crypto)
 
+target_link_libraries(mconfig PUBLIC Qt5::Core)
 if (mconfig-editors)
-  target_link_libraries(mconfig
-    Qt5::Core
+  target_link_libraries(mconfig PUBLIC
     Qt5::Gui
     Qt5::Widgets
-  )
-else (mconfig-editors)
-  target_link_libraries(mconfig
-    Qt5::Core
   )
 endif(mconfig-editors)
 

@@ -25,8 +25,8 @@ SOFTWARE.
 #include <QDateTime>
 #include <QPoint>
 #include <QRect>
-#include <QUrl>
 #include <QSettings>
+#include <QUrl>
 
 /*!
  * \defgroup Config Configuration and settings
@@ -66,7 +66,7 @@ MConfig::MConfig(const QByteArray &groupName) : MBaseConfig(groupName)
     // Nothing
 }
 
-#ifdef MCRYPTO_LIB
+#ifdef CRYPTED_CONFIG
 MConfig::MConfig(const QByteArray &groupName, const QByteArray &passphrase)
     : MBaseConfig(groupName, passphrase)
 {

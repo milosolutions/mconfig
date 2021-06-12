@@ -81,11 +81,19 @@ QList<QByteArray> MConfig::valueNames() const
 
 QVariant MConfig::value(const QByteArray &name) const
 {
-    return QVariant(mValues.value(name).type, mValues.value(name).ptr);
+    // In Qt6 arguments of QVariant c-tor has changed (QVariant::Type is deprecated)
+    #if QT_VERSION >= 0x060000
+        #define TYPE QMetaType
+    #else
+        #define TYPE int
+    #endif
+    return QVariant(TYPE(mValues.value(name).type), mValues.value(name).ptr);
+    #undef TYPE
 }
 
 void MConfig::setValue(const QByteArray &name, const QVariant &value)
 {
+
     copyValue(mValues.value(name).ptr, mValues.value(name).type, value);
 }
 
@@ -109,7 +117,14 @@ void MConfig::copyValue(void *dst, int type, const QVariant &value)
         return;
     }
 
-    Q_ASSERT(value.canConvert(type));
+    // In Qt6 arguments of QVariant::canConvert has changed (QVariant::Type is deprecated)
+    #if QT_VERSION >= 0x060000
+        #define TYPE QMetaType
+    #else
+        #define TYPE int
+    #endif
+    Q_ASSERT(value.canConvert(TYPE(type)));
+    #undef TYPE
 
     switch (type) {
         case QMetaType::Int:

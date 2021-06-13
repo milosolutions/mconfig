@@ -2,7 +2,7 @@ if (POLICY CMP0048)
   cmake_policy(SET CMP0048 NEW)
 endif ()
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16.0)
 
 project(mconfig
   VERSION 0.0.1
@@ -10,7 +10,7 @@ project(mconfig
   LANGUAGES CXX
 )
 
-find_package(Qt5 COMPONENTS REQUIRED Core)
+find_package(Qt6 COMPONENTS REQUIRED Core)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -46,14 +46,14 @@ if(mconfig-crypto)
   target_link_libraries(mconfig mcrypto)
 endif(mconfig-crypto)
 
-target_link_libraries(mconfig PUBLIC Qt5::Core)
+target_link_libraries(mconfig PUBLIC Qt6::Core)
 if (mconfig-editors)
   target_link_libraries(mconfig PUBLIC
-    Qt5::Gui
-    Qt5::Widgets
+    Qt6::Gui
+    Qt6::Widgets
   )
 endif(mconfig-editors)
 
-add_subdirectory(tst_mconfig)
-add_subdirectory(examples/exampleconfig)
+#add_subdirectory(tst_mconfig)
+#add_subdirectory(examples/exampleconfig)
 #add_subdirectory(examples/exampleconfig_with_editor)

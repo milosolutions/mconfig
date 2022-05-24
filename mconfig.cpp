@@ -129,6 +129,8 @@ void MConfig::copyValue(void *dst, int type, const QVariant &value)
     switch (type) {
         case QMetaType::Int:
             COPY_TYPE(int)
+        case QMetaType::UInt:
+            COPY_TYPE(uint)
         case QMetaType::QByteArray:
             COPY_TYPE(QByteArray)
         case QMetaType::QString:

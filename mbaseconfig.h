@@ -6,7 +6,7 @@
 #include <QMetaType>
 #include <QSettings>
 #include <QString>
-#ifdef CRYPTED_CONFIG
+#ifdef ENCRYPTED_CONFIG
 #include "mcrypto.h"
 #endif
 
@@ -14,7 +14,7 @@ class MBaseConfig
 {
 public:
    MBaseConfig(const QByteArray &groupName);
-#ifdef CRYPTED_CONFIG
+#ifdef ENCRYPTED_CONFIG
    MBaseConfig(const QByteArray &groupName, const QByteArray &passphrase);
    void setPassphrase(const QByteArray &pass);
 #endif
@@ -34,7 +34,7 @@ protected:
 private:
    const QByteArray m_groupName;
    QString m_fileName;
-#ifdef CRYPTED_CONFIG
+#ifdef ENCRYPTED_CONFIG
    MCrypto m_crypto;
    QByteArray m_passphrase;
 #endif

@@ -47,7 +47,7 @@ target_compile_definitions(mconfig PUBLIC MCONFIG_LIB)
 option(mconfig-crypto "MConfig: Build with encryption functions" OFF)
 if(mconfig-crypto)
   message("MConfig: using encryption library")
-  target_compile_definitions(mconfig PRIVATE CRYPTED_CONFIG)
+  target_compile_definitions(mconfig PRIVATE ENCRYPTED_CONFIG)
   target_link_libraries(mconfig mcrypto)
 endif(mconfig-crypto)
 

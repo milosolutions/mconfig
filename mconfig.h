@@ -32,7 +32,7 @@ class MConfig : public MBaseConfig
 {
  public:
     MConfig(const QByteArray &groupName);
-#ifdef CRYPTED_CONFIG
+#ifdef ENCRYPTED_CONFIG
     MConfig(const QByteArray &groupName, const QByteArray &passphrase);
 #endif
 

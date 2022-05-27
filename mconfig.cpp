@@ -66,7 +66,7 @@ MConfig::MConfig(const QByteArray &groupName) : MBaseConfig(groupName)
     // Nothing
 }
 
-#ifdef CRYPTED_CONFIG
+#ifdef ENCRYPTED_CONFIG
 MConfig::MConfig(const QByteArray &groupName, const QByteArray &passphrase)
     : MBaseConfig(groupName, passphrase)
 {

@@ -13,7 +13,7 @@ project(mconfig
 find_package(Qt6 COMPONENTS REQUIRED Core)
 if (NOT Qt6_FOUND)
     find_package(Qt5 5.15 REQUIRED COMPONENTS Core)
-
+endif()
 set(CMAKE_AUTOMOC ON)
 
 set(SOURCES mbaseconfig.h mbaseconfig.cpp mconfig.h mconfig.cpp)
@@ -24,6 +24,7 @@ if(mconfig-editors)
   find_package(Qt6 COMPONENTS REQUIRED Core Gui Widgets)
   if (NOT Qt6_FOUND)
     find_package(Qt5 5.15 REQUIRED COMPONENTS Core Gui Widgets)
+  endif()
   list(APPEND SOURCES
     mmetaconfig.h mmetaconfig.cpp
     editors/mmetaconfigeditor.h editors/mmetaconfigeditor.cpp

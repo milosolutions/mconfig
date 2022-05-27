@@ -26,7 +26,14 @@ SOFTWARE.
 
 #include "mbaseconfig.h"
 
-#define CONFIG_VALUE(name, type) mValues.insert(#name, ValuePtr(type, static_cast<void *>(&name)));
+template <typename T>
+constexpr int typeOfVariable(const T& var) {
+    Q_UNUSED(var)
+    return qMetaTypeId<T>();
+}
+
+#define CONFIG_VALUE(name) \
+    mValues.insert(#name, ValuePtr(typeOfVariable(name), static_cast<void *>(&name)));
 
 class MConfig : public MBaseConfig
 {

@@ -35,13 +35,13 @@ public:
     T value;
     SimpleConfig()
         : MConfig(QByteArray(QMetaType(qMetaTypeId<T>()).name()) + "Config") {
-        CONFIG_VALUE(value, qMetaTypeId<T>())
+        CONFIG_VALUE(value)
     }
   #ifdef ENCRYPTED_CONFIG
     SimpleConfig(const QByteArray& password)
         : MConfig(QByteArray(QMetaType(qMetaTypeId<T>()).name()) + "Config",
                   password) {
-        CONFIG_VALUE(value, qMetaTypeId<T>())
+        CONFIG_VALUE(value)
     }
   #endif
 };

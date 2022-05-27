@@ -18,6 +18,12 @@ SOURCES *= \
     $$PWD/mconfig.cpp \
     $$PWD/mmetaconfig.cpp
 
+mconfig-crypto {
+    # TODO check if mcrypto library is available
+    message("MConfig: using encryption library")
+    DEFINES += ENCRYPTED_CONFIG
+}
+
 mconfig-editors {
 QT *= gui widgets
 HEADERS *= \

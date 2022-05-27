@@ -62,5 +62,5 @@ endif(mconfig-editors)
 # Unit test
 add_subdirectory(tst_mconfig)
 # Examples
-#add_subdirectory(examples/exampleconfig)
-#add_subdirectory(examples/exampleconfig_with_editor)
+add_subdirectory(examples/exampleconfig)
+add_subdirectory(examples/exampleconfig_with_editor)

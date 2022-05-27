@@ -58,7 +58,8 @@ SOFTWARE.
  * \def CONFIG_VALUE
  * \brief simple initialization of mValues
  *
- * Register \a name member of class in mValues and associate it with provided \a type
+ * Register \a name member of class as a config value, meaning it will be possible to save and load its value
+ * using underlaying system in MBaseConfig.
  */
 
 MConfig::MConfig(const QByteArray &groupName) : MBaseConfig(groupName)

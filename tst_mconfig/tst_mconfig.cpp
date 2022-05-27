@@ -25,11 +25,26 @@ SOFTWARE.
 #include <QtTest>
 #include <QCoreApplication>
 #include "mconfig.h"
-#include "submconfig.h"
+#include <QRandomGenerator>
 
-#ifdef _WIN32
-  #include "windows.h"
-#endif
+// Template of simple MConfig of type T
+template <typename T>
+class SimpleConfig : public MConfig
+{
+public:
+    T value;
+    SimpleConfig()
+        : MConfig(QByteArray(QMetaType(qMetaTypeId<T>()).name()) + "Config") {
+        CONFIG_VALUE(value, qMetaTypeId<T>())
+    }
+  #ifdef ENCRYPTED_CONFIG
+    SimpleConfig(const QByteArray& password)
+        : MConfig(QByteArray(QMetaType(qMetaTypeId<T>()).name()) + "Config",
+                  password) {
+        CONFIG_VALUE(value, qMetaTypeId<T>())
+    }
+  #endif
+};
 
 class TestMConfig : public QObject
 {
@@ -39,194 +54,87 @@ private slots:
     void initTestCase();
     void cleanupTestCase();
 
-    void testLoad1_data();
-    void testLoad1();
-    void testSave1_data();
-    void testSave1();
+    void testDefaultStorage();
+    void testIniFileStorage();
 
-    void testLoad2_data();
-    void testLoad2();
-    void testSave2_data();
-    void testSave2();
-
-#ifdef MCRYPTO_LIB
-    void testSaveEncrypted1_data();
-    void testSaveEncrypted1();
-    void testLoadEncrypted1_data();
-    void testLoadEncrypted1();
-
-    void testLoadEncrypted2_data();
-    void testLoadEncrypted2();
-    void testSaveEncrypted2_data();
-    void testSaveEncrypted2();
+#ifdef ENCRYPTED_CONFIG
+    void testEncryptedStorage();
 #endif
 
-
 private:
-    QString m_testConfigPath = QCoreApplication::applicationDirPath() + "/miloConfTest.ini";
-
-    void refreshRows();
+    const QString m_IniPath = QStringLiteral("test_config_file.ini");
 };
-
-void TestMConfig::refreshRows()
-{
-    QTest::addColumn<QByteArray>("groupName");
-    QTest::newRow("SimpleGroupName") << QByteArray("TestGroup");
-    QTest::newRow("NumberGroupName") << QByteArray("123");
-    QTest::newRow("Spaced GroupName") << QByteArray("Test Group");
-}
 
 void TestMConfig::initTestCase()
 {
-    QCoreApplication::setApplicationName("MConfig Test");
+    QCoreApplication::setApplicationName("MConfig Unit Test");
     QCoreApplication::setOrganizationName("Milo");
 }
 
 void TestMConfig::cleanupTestCase()
 {
-    MConfig config("Test");
+    // Clear generated files
+    QFile::remove(m_IniPath);
+    MConfig config("");
     QFile::remove(config.filePath());
-    QFile::remove(m_testConfigPath);
 }
 
-void TestMConfig::testLoad1_data()
+
+template <typename T>
+void test_save_and_load(T userValue)
 {
-    refreshRows();
+    SimpleConfig<T> config1;
+    config1.value = userValue;
+    config1.save();
+    SimpleConfig<T> config2;
+    config2.load();
+    QCOMPARE(config1.value, config2.value);
+}
+void TestMConfig::testDefaultStorage()
+{
+    int randomInt = static_cast<int>(QRandomGenerator::global()->generate());
+    test_save_and_load(randomInt);
+    test_save_and_load(QDateTime(QDate(2022, 5, 27), QTime(20, 2)));
+    test_save_and_load(QUrl("https://milosolutions.com"));
+
+    // TODO make similar calls for all supported data types
 }
 
-void TestMConfig::testLoad1()
+template <typename T>
+void test_save_and_load_with_inifile(T userValue, const QString& filepath)
 {
-    QFETCH(QByteArray, groupName);
-    SubMConfig config1(groupName);
-    config1.zeroData();
-    config1.load(":/data/miloConfTest.ini");
+    SimpleConfig<T> config1;
+    config1.value = userValue;
+    config1.save(filepath);
+    SimpleConfig<T> config2;
+    config2.load(filepath);
+    QCOMPARE(config1.value, config2.value);
+}
+void TestMConfig::testIniFileStorage()
+{
+    test_save_and_load_with_inifile(12, m_IniPath);
+    test_save_and_load_with_inifile(QString("text to be remembered"), m_IniPath);
 
-    SubMConfig config2(groupName);
-
-    QCOMPARE(config1, config2);
+    // TODO make similar calls for all supported data types
 }
 
-void TestMConfig::testSave1_data()
+#ifdef ENCRYPTED_CONFIG
+template <typename T>
+void test_save_and_load_encrypted(T userValue)
 {
-    refreshRows();
+    QByteArray password = "Password must be known before config is created!"
+    SimpleConfig<T> config1(password);
+    config1.value = userValue;
+    config1.save();
+    SimpleConfig<T> config2(password);
+    config2.load();
+    QCOMPARE(config1.value, config2.value);
 }
-
-void TestMConfig::testSave1()
+void TestMConfig::testEncryptedStorage()
 {
-    QFETCH(QByteArray, groupName);
-    SubMConfig config(groupName);
-    config.save();
-#ifdef _WIN32
-    // Checking if registry path exists (only possible using Windows API)
-    HKEY hk;
-    QString str = config.filePath().remove("\\HKEY_CURRENT_USER\\");
-    LONG result = RegOpenKeyEx(HKEY_CURRENT_USER, reinterpret_cast<LPCSTR>(str.toUtf8().data()), 0, KEY_READ, &hk);
-    QCOMPARE(result, ERROR_SUCCESS);
-#else
-    QVERIFY(QFile::exists(config.filePath()));
-#endif
-}
+    test_save_and_load_encrypted(int(300732));
 
-void TestMConfig::testLoad2_data()
-{
-    refreshRows();
-}
-
-void TestMConfig::testLoad2()
-{
-    QFETCH(QByteArray, groupName);
-    SubMConfig config1(groupName);
-    SubMConfig config2(groupName);
-
-    config1.zeroData();
-    QVERIFY(!(config1 == config2));
-    config1.load();
-    QCOMPARE(config1, config2);
-}
-
-void TestMConfig::testSave2_data()
-{
-    refreshRows();
-}
-
-void TestMConfig::testSave2()
-{
-    QFETCH(QByteArray, groupName);
-    SubMConfig config(groupName);
-    config.save(m_testConfigPath);
-    QVERIFY(QFile::exists(m_testConfigPath));
-}
-
-#ifdef MCRYPTO_LIB
-// Testing encrypted save/load
-
-void TestMConfig::testSaveEncrypted1_data()
-{
-    refreshRows();
-}
-
-void TestMConfig::testSaveEncrypted1()
-{
-    QFETCH(QByteArray, groupName);
-    SubMConfig config(groupName);
-    config.save();
-#ifdef _WIN32
-    // Checking if registry path exists (only possible using Windows API)
-    HKEY hk;
-    QString str = config.filePath().remove("\\HKEY_CURRENT_USER\\");
-    LONG result = RegOpenKeyEx(HKEY_CURRENT_USER, reinterpret_cast<LPCWSTR>(str.utf16()), 0, KEY_READ, &hk);
-    QCOMPARE(result, ERROR_SUCCESS);
-#else
-    QVERIFY(QFile::exists(config.filePath()));
-#endif
-}
-
-void TestMConfig::testLoadEncrypted1_data()
-{
-    refreshRows();
-}
-
-void TestMConfig::testLoadEncrypted1()
-{
-    QFETCH(QByteArray, groupName);
-    SubMConfig config1(groupName);
-    config1.zeroData();
-    config1.load();
-
-    SubMConfig config2(groupName);
-
-    QCOMPARE(config1, config2);
-}
-
-void TestMConfig::testLoadEncrypted2_data()
-{
-    refreshRows();
-}
-
-void TestMConfig::testLoadEncrypted2()
-{
-    QFETCH(QByteArray, groupName);
-    SubMConfig config1(groupName);
-    SubMConfig config2(groupName);
-
-    config1.zeroData();
-    QVERIFY(!(config1 == config2));
-    config1.load();
-    QCOMPARE(config1, config2);
-}
-
-void TestMConfig::testSaveEncrypted2_data()
-{
-    QFile::remove(m_testConfigPath);
-    refreshRows();
-}
-
-void TestMConfig::testSaveEncrypted2()
-{
-    QFETCH(QByteArray, groupName);
-    SubMConfig config(groupName);
-    config.save(m_testConfigPath);
-    QVERIFY(QFile::exists(m_testConfigPath));
+    // TODO make similar calls for all supported data types
 }
 #endif
 

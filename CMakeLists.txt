@@ -59,7 +59,8 @@ if (mconfig-editors)
   )
 endif(mconfig-editors)
 
-# TODO tests are temporarily disabled
-#add_subdirectory(tst_mconfig)
+# Unit test
+add_subdirectory(tst_mconfig)
+# Examples
 #add_subdirectory(examples/exampleconfig)
 #add_subdirectory(examples/exampleconfig_with_editor)

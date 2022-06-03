@@ -33,7 +33,7 @@ class ExampleConfig : public MConfig
 {
 public:
     ExampleConfig();
-    ~ExampleConfig();
+    ~ExampleConfig() override;
 
     int exampleValue = 42;
     QByteArray exampleString = "Milo";

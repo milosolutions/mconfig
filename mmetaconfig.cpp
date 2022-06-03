@@ -34,7 +34,7 @@ MMetaConfig::MMetaConfig(const QByteArray &groupName) : MBaseConfig(groupName)
     // Nothing
 }
 
-#ifdef MCRYPTO_LIB
+#ifdef CRYPTED_CONFIG
 MMetaConfig::MMetaConfig(const QByteArray &groupName, const QByteArray &passphrase)
     : MBaseConfig(groupName, passphrase)
 {

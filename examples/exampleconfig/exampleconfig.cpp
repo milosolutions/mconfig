@@ -24,14 +24,14 @@ SOFTWARE.
 
 #include "exampleconfig.h"
 
-#ifdef MCRYPTO_LIB
+#ifdef ENCRYPTED_CONFIG
 ExampleConfig::ExampleConfig() : MConfig("ExampleConfig", "secret")
 #else
 ExampleConfig::ExampleConfig() : MConfig("ExampleConfig")
 #endif
 {
-    CONFIG_VALUE(exampleValue, QMetaType::Int);
-    CONFIG_VALUE(exampleString, QMetaType::QByteArray);
+    CONFIG_VALUE(exampleValue)
+    CONFIG_VALUE(exampleString)
     //load(); // uncomment if you want to load settings from file
 }
 

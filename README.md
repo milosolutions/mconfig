@@ -29,8 +29,9 @@ before including mconfig.pri file.
 
 ### Encryption
 
-Is is possible to encrypt your config file! To enable it simply add MCrypto library to your project (include mcrypto.pri)
-and set MCRYPTO_LIB flag (DEFINES += MCRYPTO_LIB)
+It is possible to encrypt your config file! To enable it simply add MCrypto library to your project:
+for qmake ```include(mcrypto.pri)``` or for cmake ```add_subdirectory(/your-path-to-mcdb/mcrypto mcrypto))```.
+Then you can enable build option called **mconfig-mcrypto**.
 
 # License
 

@@ -26,6 +26,7 @@ SOFTWARE.
 #include <QPoint>
 #include <QRect>
 #include <QSettings>
+#include <QUrl>
 
 /*!
  * \defgroup Config Configuration and settings
@@ -57,7 +58,8 @@ SOFTWARE.
  * \def CONFIG_VALUE
  * \brief simple initialization of mValues
  *
- * Register \a name member of class in mValues and associate it with provided \a type
+ * Register \a name member of class as a config value, meaning it will be possible to save and load its value
+ * using underlaying system in MBaseConfig.
  */
 
 MConfig::MConfig(const QByteArray &groupName) : MBaseConfig(groupName)
@@ -65,7 +67,7 @@ MConfig::MConfig(const QByteArray &groupName) : MBaseConfig(groupName)
     // Nothing
 }
 
-#ifdef MCRYPTO_LIB
+#ifdef ENCRYPTED_CONFIG
 MConfig::MConfig(const QByteArray &groupName, const QByteArray &passphrase)
     : MBaseConfig(groupName, passphrase)
 {
@@ -80,11 +82,19 @@ QList<QByteArray> MConfig::valueNames() const
 
 QVariant MConfig::value(const QByteArray &name) const
 {
-    return QVariant(mValues.value(name).type, mValues.value(name).ptr);
+    // In Qt6 arguments of QVariant c-tor has changed (QVariant::Type is deprecated)
+    #if QT_VERSION >= 0x060000
+        #define TYPE QMetaType
+    #else
+        #define TYPE int
+    #endif
+    return QVariant(TYPE(mValues.value(name).type), mValues.value(name).ptr);
+    #undef TYPE
 }
 
 void MConfig::setValue(const QByteArray &name, const QVariant &value)
 {
+
     copyValue(mValues.value(name).ptr, mValues.value(name).type, value);
 }
 
@@ -108,11 +118,20 @@ void MConfig::copyValue(void *dst, int type, const QVariant &value)
         return;
     }
 
-    Q_ASSERT(value.canConvert(type));
+    // In Qt6 arguments of QVariant::canConvert has changed (QVariant::Type is deprecated)
+    #if QT_VERSION >= 0x060000
+        #define TYPE QMetaType
+    #else
+        #define TYPE int
+    #endif
+    Q_ASSERT(value.canConvert(TYPE(type)));
+    #undef TYPE
 
     switch (type) {
         case QMetaType::Int:
             COPY_TYPE(int)
+        case QMetaType::UInt:
+            COPY_TYPE(uint)
         case QMetaType::QByteArray:
             COPY_TYPE(QByteArray)
         case QMetaType::QString:
@@ -131,6 +150,8 @@ void MConfig::copyValue(void *dst, int type, const QVariant &value)
             COPY_TYPE(QRectF)
         case QMetaType::QDateTime:
             COPY_TYPE(QDateTime)
+        case QMetaType::QUrl:
+            COPY_TYPE(QUrl)
         default:
             qFatal("Config: type unsupported!");
     }

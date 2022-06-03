@@ -30,7 +30,7 @@ class MMetaConfig : public QObject, public MBaseConfig
     Q_OBJECT
 public:
     MMetaConfig(const QByteArray &groupName);
-#ifdef MCRYPTO_LIB
+#ifdef CRYPTED_CONFIG
     MMetaConfig(const QByteArray &groupName, const QByteArray &passphrase);
 #endif
 protected:

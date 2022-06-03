@@ -2,7 +2,7 @@ if (POLICY CMP0048)
   cmake_policy(SET CMP0048 NEW)
 endif ()
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16.0)
 
 project(mconfig
   VERSION 0.0.1
@@ -10,19 +10,23 @@ project(mconfig
   LANGUAGES CXX
 )
 
-find_package(Qt5 COMPONENTS REQUIRED Core)
-
+find_package(Qt6 COMPONENTS REQUIRED Core)
+if (NOT Qt6_FOUND)
+    find_package(Qt5 5.15 REQUIRED COMPONENTS Core)
+endif()
 set(CMAKE_AUTOMOC ON)
 
-set(SOURCES mbaseconfig.h mbaseconfig.cpp mconfig.h mconfig.cpp
-  mmetaconfig.h mmetaconfig.cpp
-)
+set(SOURCES mbaseconfig.h mbaseconfig.cpp mconfig.h mconfig.cpp)
 
 option(mconfig-editors "MConfig: Build GUI (QtWidgets) config editors" OFF)
 
 if(mconfig-editors)
-  find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets)
+  find_package(Qt6 COMPONENTS REQUIRED Core Gui Widgets)
+  if (NOT Qt6_FOUND)
+    find_package(Qt5 5.15 REQUIRED COMPONENTS Core Gui Widgets)
+  endif()
   list(APPEND SOURCES
+    mmetaconfig.h mmetaconfig.cpp
     editors/mmetaconfigeditor.h editors/mmetaconfigeditor.cpp
     editors/propertyeditor.h editors/propertyeditor.cpp
     editors/stringeditor.h editors/stringeditor.cpp)
@@ -42,21 +46,21 @@ target_compile_definitions(mconfig PUBLIC MCONFIG_LIB)
 
 option(mconfig-crypto "MConfig: Build with encryption functions" OFF)
 if(mconfig-crypto)
+  message("MConfig: using encryption library")
+  target_compile_definitions(mconfig PRIVATE ENCRYPTED_CONFIG)
   target_link_libraries(mconfig mcrypto)
 endif(mconfig-crypto)
 
+target_link_libraries(mconfig PUBLIC Qt::Core)
 if (mconfig-editors)
-  target_link_libraries(mconfig
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Widgets
-  )
-else (mconfig-editors)
-  target_link_libraries(mconfig
-    Qt5::Core
+  target_link_libraries(mconfig PUBLIC
+    Qt::Gui
+    Qt::Widgets
   )
 endif(mconfig-editors)
 
+# Unit test
 add_subdirectory(tst_mconfig)
+# Examples
 add_subdirectory(examples/exampleconfig)
-#add_subdirectory(examples/exampleconfig_with_editor)
+add_subdirectory(examples/exampleconfig_with_editor)

@@ -24,15 +24,22 @@ SOFTWARE.
 #ifndef MCONFIG_H
 #define MCONFIG_H
 
-#include <mbaseconfig.h>
+#include "mbaseconfig.h"
 
-#define CONFIG_VALUE(name, type) mValues.insert(#name, ValuePtr(type, static_cast<void *>(&name)));
+template <typename T>
+constexpr int typeOfVariable(const T& var) {
+    Q_UNUSED(var)
+    return qMetaTypeId<T>();
+}
+
+#define CONFIG_VALUE(name) \
+    mValues.insert(#name, ValuePtr(typeOfVariable(name), static_cast<void *>(&name)));
 
 class MConfig : public MBaseConfig
 {
  public:
     MConfig(const QByteArray &groupName);
-#ifdef MCRYPTO_LIB
+#ifdef ENCRYPTED_CONFIG
     MConfig(const QByteArray &groupName, const QByteArray &passphrase);
 #endif
 
@@ -41,7 +48,6 @@ class MConfig : public MBaseConfig
     QVariant value(const QByteArray &name) const final;
     void setValue(const QByteArray &name, const QVariant &value) final;
 
-protected:
     class ValuePtr
     {
      public:

@@ -60,7 +60,7 @@ void MMetaConfig::setValue(const QByteArray &name, const QVariant &value)
 
 /*!
  * Gather names of all properties for MBaseConfig.
- * Read only properties defined for this object.
+ * Read only properties defined for this object and subclasses.
  */
 void MMetaConfig::init(const QMetaObject *object)
 {

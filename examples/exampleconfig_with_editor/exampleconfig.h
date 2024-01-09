@@ -22,8 +22,7 @@ SOFTWARE.
 *******************************************************************************/
 
 
-#ifndef EXAMPLECONFIG_H
-#define EXAMPLECONFIG_H
+#pragma once
 
 #include "mmetaconfig.h"
 
@@ -37,4 +36,3 @@ class ExampleConfig : public MMetaConfig
     M_MEMBER_V(QByteArray, example_string,  "Milo is great")
 };
 
-#endif // EXAMPLECONFIG_H

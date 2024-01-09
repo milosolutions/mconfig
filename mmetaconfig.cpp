@@ -21,6 +21,13 @@
  * };
  * \endcode
  *
+ * ### Automatic load and save
+ * It might be useful to have config object load data from QSettings storage on construction and save them on deletion. It can be enabled by replacing macro M_OBJECT with M_OBJECT_AUTOLOADSAVE. 
+ * Config classes designed this way require only header file.
+ * 
+ * QML support
+ * MMetaConfig iherits QObject and every member is declared as Q_PROPERTY. Therefore if you expose QObject pointer to config to qml context you can read and modify all members.
+ *
  * ### Hint on member naming
  * There is no limitation on member names. However MMetaConfigEditor is designed in
  * a way that will replace "_" in name with space (" "). This allow for nice ui generation.

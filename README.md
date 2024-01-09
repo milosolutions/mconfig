@@ -22,16 +22,22 @@ check doxygen docs or see the comments directly in the source file(s).
 
 ### MMetaConfig
 
-This is flavor of config class that is designed for easy generation of ui for editing values of config.
-Basic editor is provided under the name MMetaConfigEditor. To use it in project add `CONFIG += mconfig-editors`
-before including mconfig.pri file.
+QObject-based version of config that can be easily used in QML code. This class is designed for automatic  generation of ui for editing values of config. 
+For apps using qt widgets basic editors are provided under the name MMetaConfigEditor. 
 
+Usage:
+* cmake: set mconfig-editors option to ON
+* qmake: `CONFIG += mconfig-editors` (before including mconfig.pri file)
 
 ### Encryption
 
-It is possible to encrypt your config file! To enable it simply add MCrypto library to your project:
-for qmake ```include(mcrypto.pri)``` or for cmake ```add_subdirectory(/your-path-to-mcdb/mcrypto mcrypto))```.
-Then you can enable build option called **mconfig-mcrypto**.
+It is possible to encrypt your config file using MCrypto library.
+
+Usage:
+1. add mcrypto
+	* qmake `include(mcrypto.pri)` 
+	* cmake `add_subdirectory(/your-path-to-mcdb/mcrypto mcrypto))`
+1. enable build option called **mconfig-mcrypto**.
 
 # License
 

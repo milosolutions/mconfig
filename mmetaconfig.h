@@ -9,21 +9,24 @@
 public:                            \
     object() : MMetaConfig(#object) { init(metaObject()); }
 
+#define M_OBJECT_AUTOLOADSAVE(object) \
+public:                            \
+     object() : MMetaConfig(#object) { init(metaObject()); load(); } \
+    ~object() override { save(); }
+
 //Config member macro
 #define M_MEMBER(type, name) \
 public:                        \
-   type name;                  \
-                               \
+    type name;                  \
 private:                       \
-   Q_PROPERTY(type name MEMBER name)
+    Q_PROPERTY(type name MEMBER name)
 
 //Config member macro - default value
 #define M_MEMBER_V(type, name, value) \
-public:                                 \
-   type name{value};                   \
-                                        \
-private:                                \
-   Q_PROPERTY(type name MEMBER name)
+public:                               \
+    type name{value};                  \
+private:                              \
+    Q_PROPERTY(type name MEMBER name)
 
 class MMetaConfig : public QObject, public MBaseConfig
 {
